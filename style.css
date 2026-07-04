@@ -1,3 +1,4 @@
+/* --- ОБЩИЕ НАСТРОЙКИ ЭКРАНА --- */
 body {
     background-color: #121014;
     color: #ffffff;
@@ -10,7 +11,7 @@ body {
     min-height: 100vh;
 }
 
-/* Сетка: Делим экран на две колонки */
+/* Сетка: Двухколоночный макет */
 .main-layout {
     display: flex;
     gap: 40px;
@@ -32,24 +33,62 @@ body {
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
-.avatar-wrapper { width: 130px; height: 130px; margin: 0 auto 20px; }
+.avatar-wrapper {
+    width: 130px;
+    height: 130px;
+    margin: 0 auto 20px;
+}
+
 .osu-avatar {
-    width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
-    border: 4px solid #ff66aa; box-shadow: 0 0 20px #ff66aa;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #ff66aa;
+    box-shadow: 0 0 20px #ff66aa;
     transition: transform 0.3s;
 }
-.osu-avatar:hover { transform: scale(1.05); }
-.osu-username { font-size: 2rem; margin: 10px 0 5px; font-weight: 800; }
-.osu-status { color: #b9b5c4; font-size: 0.9rem; margin-bottom: 25px; }
-.osu-links { display: flex; flex-direction: column; gap: 12px; }
+
+.osu-avatar:hover {
+    transform: scale(1.05);
+}
+
+.osu-username {
+    font-size: 2rem;
+    margin: 10px 0 5px;
+    font-weight: 800;
+}
+
+.osu-status {
+    color: #b9b5c4;
+    font-size: 0.9rem;
+    margin-bottom: 25px;
+}
+
+.osu-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
 .osu-btn {
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    color: white; text-decoration: none; padding: 12px; font-weight: 600;
-    background: #2e2a36; border-left: 6px solid #ff66aa; border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: white;
+    text-decoration: none;
+    padding: 12px;
+    font-weight: 600;
+    background: #2e2a36;
+    border-left: 6px solid #ff66aa;
+    border-radius: 8px;
     transition: all 0.2s ease;
 }
+
 .osu-btn:hover {
-    background: #ff66aa; transform: translateX(6px);
+    background: #ff66aa;
+    transform: translateX(6px);
     box-shadow: 0 0 15px rgba(255, 102, 170, 0.6);
 }
 
@@ -74,6 +113,31 @@ body {
     color: #ff66aa;
 }
 
+/* Селектор сложности */
+.difficulty-selector {
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: #b9b5c4;
+}
+
+.difficulty-selector select {
+    background: #2e2a36;
+    border: 2px solid #ff66aa;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.difficulty-selector select:hover {
+    box-shadow: 0 0 10px rgba(255, 102, 170, 0.5);
+    background: #383344;
+}
+
+/* Игровое поле */
 .mania-board {
     position: relative;
     width: 240px;
@@ -83,6 +147,7 @@ body {
     border-radius: 8px;
     display: flex;
     overflow: hidden;
+    transition: all 0.1s ease;
 }
 
 .lane {
@@ -91,9 +156,12 @@ body {
     border-right: 1px solid #232029;
     position: relative;
 }
-.lane:last-child { border-right: none; }
 
-/* Зона, куда падают ноты */
+.lane:last-child {
+    border-right: none;
+}
+
+/* Хит-зона (куда падают ноты) */
 .hit-zone {
     position: absolute;
     bottom: 0;
@@ -113,29 +181,41 @@ body {
     font-weight: bold;
     color: #b9b5c4;
     font-size: 0.9rem;
+    transition: background 0.1s;
 }
 
-/* Активная подсветка зоны при нажатии */
 .key-hint.active {
     background: rgba(255, 102, 170, 0.4);
     color: #fff;
     text-shadow: 0 0 5px #fff;
 }
 
-/* Сами падающие ноты */
+/* Падающие ноты */
 .note {
     position: absolute;
     width: 100%;
     height: 15px;
-    background: #00ffff; /* Голубые крайние ноты */
+    background: #00ffff;
     box-shadow: 0 0 10px #00ffff;
     left: 0;
+    z-index: 2;
 }
 
-/* Внутренние дорожки сделаем розовыми, как в osu! */
 #lane-1 .note, #lane-2 .note {
     background: #ff66aa;
     box-shadow: 0 0 10px #ff66aa;
+}
+
+/* Длинные ноты (Hold Notes) */
+.note.hold-note {
+    background: linear-gradient(to top, #00ffff, #0088ff);
+    border-radius: 4px;
+    box-shadow: 0 0 15px #00ffff;
+}
+
+#lane-1 .note.hold-note, #lane-2 .note.hold-note {
+    background: linear-gradient(to top, #ff66aa, #b500ff);
+    box-shadow: 0 0 15px #ff66aa;
 }
 
 /* Текст комбо и точности */
@@ -146,50 +226,16 @@ body {
     transform: translate(-50%, -50%);
     font-size: 1.8rem;
     font-weight: 900;
-    font-family: Arial, sans-serif;
     pointer-events: none;
+    z-index: 10;
+    transition: opacity 0.1s ease;
 }
 
-#start-game-btn {
-    margin-top: 15px;
-    background: #ff66aa;
-    border: none;
-    color: white;
-    padding: 10px 24px;
-    font-size: 1rem;
-    font-weight: bold;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-#start-game-btn:hover { transform: scale(1.05); background: #ff4499; }
-
-/* Адаптация под мобильные: перестраиваем в один столбец */
-@media (max-width: 768px) {
-    .main-layout { flex-direction: column-reverse; align-items: center; }
-}
-.difficulty-selector {
-    margin-bottom: 15px;
-    font-weight: bold;
-    color: #b9b5c4;
-}
-
-.difficulty-selector select {
-    background: #2e2a36;
-    border: 2px solid #ff66aa;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    outline: none;
-}
-/* Добавляем класс пульсации для всего борда */
+/* --- ЭФФЕКТЫ И АНИМАЦИИ --- */
 .mania-board.pulse {
     animation: boardPulse 0.2s ease-in-out;
 }
 
-/* Пульсация аватарки в такт */
 .osu-avatar.pulse {
     animation: avatarPulse 0.2s ease-in-out;
 }
@@ -206,22 +252,10 @@ body {
     100% { transform: scale(1); }
 }
 
-/* Стили для длинных нот (Hold Notes) */
-.note.hold-note {
-    background: linear-gradient(to top, #00ffff, #0088ff);
-    border-radius: 4px;
-    box-shadow: 0 0 15px #00ffff;
-}
-
-/* Внутренние дорожки для холдов сделаем розово-фиолетовыми */
-#lane-1 .note.hold-note, #lane-2 .note.hold-note {
-    background: linear-gradient(to top, #ff66aa, #b500ff);
-    box-shadow: 0 0 15px #ff66aa;
-}
-/* Контейнер для эффектов взрыва внутри дорожки */
+/* Эффект взрыва ноты при попадании */
 .hit-effect {
     position: absolute;
-    bottom: 45px; /* Прямо над хит-зоной */
+    bottom: 45px;
     left: 50%;
     transform: translateX(-50%) scale(0);
     width: 40px;
@@ -231,88 +265,19 @@ body {
     pointer-events: none;
     opacity: 1;
     animation: burstEffect 0.2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+    z-index: 5;
 }
 
-/* Для крайних дорожек (0 и 3) сделаем вспышку голубой под цвет их нот */
 .lane-0 .hit-effect, .lane-3 .hit-effect {
     background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(0,255,255,0.8) 50%, rgba(0,255,255,0) 100%);
 }
 
 @keyframes burstEffect {
-    0% {
-        transform: translateX(-50%) scale(0.3);
-        opacity: 1;
-    }
-    100% {
-        transform: translateX(-50%) scale(1.5);
-        opacity: 0;
-    }
-}
-/* Настройки внешнего вида выбора сложности */
-.difficulty-selector {
-    margin-bottom: 15px;
-    font-weight: bold;
-    color: #b9b5c4;
-    font-family: 'Segoe UI', Arial, sans-serif;
+    0% { transform: translateX(-50%) scale(0.3); opacity: 1; }
+    100% { transform: translateX(-50%) scale(1.5); opacity: 0; }
 }
 
-.difficulty-selector select {
-    background: #2e2a36; /* Темно-фиолетовый фон под стиль профиля */
-    border: 2px solid #ff66aa; /* Розовая фирменная рамка */
-    color: white;
-    padding: 6px 12px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    outline: none;
-    transition: all 0.2s ease;
-}
-
-/* Эффект легкого свечения при наведении на селектор */
-.difficulty-selector select:hover {
-    box-shadow: 0 0 10px rgba(255, 102, 170, 0.5);
-    background: #383344;
-}
-
-/* Стили для кнопок управления (Старт, Пауза, Сброс), чтобы они стояли красиво в ряд */
-.game-controls {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-.game-controls button {
-    margin-top: 0 !important; /* Убираем лишние отступы сверху */
-}
-
-#pause-game-btn {
-    background: #383344;
-    border: 2px solid #00ffcc;
-    color: white;
-    padding: 10px 20px;
-    font-size: 1rem;
-    font-weight: bold;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-#pause-game-btn:hover { transform: scale(1.05); background: #00ffcc; color: #1c1a21; }
-
-#reset-game-btn {
-    background: #383344;
-    border: 2px solid #ff4444;
-    color: white;
-    padding: 10px 20px;
-    font-size: 1rem;
-    font-weight: bold;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-#reset-game-btn:hover { transform: scale(1.05); background: #ff4444; color: white; }
-/* --- КНОПКИ УПРАВЛЕНИЯ ИГРОЙ (СТАРТ, ПАУЗА, СБРОС) --- */
-
-/* Контейнер, который выстраивает кнопки в один красивый ряд */
+/* --- КНОПКИ УПРАВЛЕНИЯ ИГРОЙ --- */
 .game-controls {
     display: flex;
     gap: 10px;
@@ -321,7 +286,6 @@ body {
     width: 100%;
 }
 
-/* Общие правила для ВСЕХ трех кнопок управления */
 #start-game-btn, 
 #pause-game-btn, 
 #reset-game-btn {
@@ -336,7 +300,6 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Индивидуальный стиль для кнопки START (Розовая неоновая) */
 #start-game-btn {
     background: #ff66aa;
     border: 2px solid #ff66aa;
@@ -348,7 +311,6 @@ body {
     box-shadow: 0 0 15px rgba(255, 102, 170, 0.6);
 }
 
-/* Индивидуальный стиль для кнопки PAUSE (Бирюзовая) */
 #pause-game-btn {
     background: #1c1a21;
     border: 2px solid #00ffcc;
@@ -361,7 +323,6 @@ body {
     box-shadow: 0 0 15px rgba(0, 255, 204, 0.6);
 }
 
-/* Индивидуальный стиль для кнопки RESET (Красная) */
 #reset-game-btn {
     background: #1c1a21;
     border: 2px solid #ff4444;
@@ -372,4 +333,13 @@ body {
     background: #ff4444;
     color: white;
     box-shadow: 0 0 15px rgba(255, 68, 68, 0.6);
+}
+
+/* Адаптивность для мобилок */
+@media (max-width: 768px) {
+    .main-layout {
+        flex-direction: column-reverse;
+        align-items: center;
+        gap: 20px;
+    }
 }
