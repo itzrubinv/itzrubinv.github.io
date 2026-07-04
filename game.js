@@ -1,4 +1,4 @@
-console.log("Osu!mania: Audio Spectrum Visualizer Edition Loaded!");
+console.log("Osu!mania: Ultimate Game-Sense Edition Loaded!");
 
 let score = 0;
 let combo = 0;
@@ -30,6 +30,15 @@ const avatar = document.querySelector('.osu-avatar');
 
 let activeHoldNotes = [null, null, null, null];
 let isKeyPressed = [false, false, false, false];
+
+// Мгновенное воспроизведение звуков без заиканий
+function playSound(soundId) {
+    const sound = document.getElementById(soundId);
+    if (sound) {
+        sound.currentTime = 0;
+        sound.play().catch(e => console.log("Sound play prevented by browser policy"));
+    }
+}
 
 function changeDifficulty() {
     if (isPlaying && !isPaused) return; 
@@ -69,10 +78,7 @@ function startManiaGame() {
 
     if(music) {
         music.currentTime = 0;
-        
-        // Инициализируем анализатор спектра при первом запуске звука
         initVisualizer();
-
         music.play().catch(e => console.log("Audio play deferred setup"));
         
         music.onended = () => {
@@ -107,36 +113,27 @@ function initVisualizer() {
     if (!canvas) return;
     canvasCtx = canvas.getContext('2d');
 
-    // Подгоняем внутреннее разрешение холста под его CSS размеры
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
 
-    // Создаем аудио контекст (только один раз за сессию)
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioCtx.createAnalyser();
-        // Подключаем HTML5 аудио-плеер к Web Audio API
         source = audioCtx.createMediaElementSource(music);
         source.connect(analyser);
         analyser.connect(audioCtx.destination);
     }
 
-    // Настройки сглаживания спектра
-    analyser.fftSize = 64; // Небольшое число, чтобы полосы были широкими под 4 дорожки
+    analyser.fftSize = 64; 
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
-    // Функция рендеринга кадров анимации спектра
     function draw() {
         if (!isPlaying) return;
-        
         animationFrameId = requestAnimationFrame(draw);
-
-        if (isPaused) return; // Замораживаем спектр на паузе
+        if (isPaused) return;
 
         analyser.getByteFrequencyData(dataArray);
-
-        // Очищаем экран на каждом кадре
         canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
 
         const barWidth = (canvas.width / bufferLength) * 1.4;
@@ -144,23 +141,19 @@ function initVisualizer() {
         let x = 0;
 
         for (let i = 0; i < bufferLength; i++) {
-            barHeight = dataArray[i] * 1.2; // Множитель высоты прыжка
+            barHeight = dataArray[i] * 1.2; 
 
-            // Плавный градиент от розового (osu!) к фиолетовому сверху
+            // Глубокий тёмно-фиолетовый переходящий в приглушённый бордово-розовый
             let gradient = canvasCtx.createLinearGradient(0, canvas.height, 0, canvas.height - barHeight);
-            gradient.addColorStop(0, '#ff66aa');
-            gradient.addColorStop(1, '#b500ff');
+            gradient.addColorStop(0, '#4a152d'); 
+            gradient.addColorStop(1, '#23003b'); 
 
             canvasCtx.fillStyle = gradient;
-            
-            // Рисуем полоски, растущие СНИЗУ вверх
             canvasCtx.fillRect(x, canvas.height - barHeight, barWidth - 3, barHeight);
-
             x += barWidth;
         }
     }
 
-    // Запускаем цикл отрисовки спектра
     if (audioCtx.state === 'suspended') {
         audioCtx.resume();
     }
@@ -173,7 +166,7 @@ function createNote(laneIndex, isHold) {
     const note = document.createElement('div');
     note.classList.add('note');
     
-    let noteHeight = 15;
+    let noteHeight = 30; // Увеличенная базовая высота
     if (isHold) {
         note.classList.add('hold-note');
         noteHeight = 70;
@@ -205,6 +198,7 @@ function createNote(laneIndex, isHold) {
             if (activeHoldNotes[laneIndex] === note) activeHoldNotes[laneIndex] = null;
             note.remove();
             showRating('MISS', '#ff4444');
+            playSound('miss-sound'); // Звук промаха
             combo = 0;
             updateUI();
         }
@@ -227,6 +221,10 @@ window.addEventListener('keydown', (e) => {
         const notesInLane = laneElements[keyIndex] ? laneElements[keyIndex].getElementsByClassName('note') : [];
         if (notesInLane.length > 0) {
             const targetNote = notesInLane[0];
+            
+            // Защита от перехвата ноты, которая уже находится в процессе анимации исчезновения
+            if (targetNote.classList.contains('fade-out-hold')) return;
+
             const noteTop = parseInt(targetNote.style.top);
             const isHold = targetNote.dataset.isHold === "true";
             const noteHeight = parseInt(targetNote.dataset.height);
@@ -241,11 +239,13 @@ window.addEventListener('keydown', (e) => {
                     score += 100;
                     combo++;
                     showRating('HOLD!', '#00ffcc');
+                    playSound('hit-sound'); // Звук начала зажатия холда
                 } else {
                     perfectHits++;
                     score += 300;
                     combo++;
                     showRating('300', '#ffcc00');
+                    playSound('hit-sound'); // Звук обычного попадания
                     destroyNote(targetNote);
                 }
                 if (combo > maxCombo) maxCombo = combo;
@@ -265,8 +265,19 @@ window.addEventListener('keyup', (e) => {
         if (activeHoldNotes[keyIndex]) {
             const note = activeHoldNotes[keyIndex];
             activeHoldNotes[keyIndex] = null;
-            destroyNote(note);
+            
+            // Останавливаем таймер движения и запускаем красивое растворение слайда
+            clearInterval(note.dataset.intervalId);
+            note.classList.add('fade-out-hold');
+            createHitEffect(keyIndex); 
+            playSound('hit-sound');   // Финальный щелчок закрытия слайда
+            
+            setTimeout(() => {
+                note.remove();
+            }, 250);
+            
             showRating('RELEASE!', '#b500ff');
+            updateUI();
         }
     }
 });
@@ -348,6 +359,10 @@ function resetManiaGame() {
         canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
+    // Сброс фоновых вспышек при ресете
+    const flashOverlay = document.getElementById('combo-flash-overlay');
+    if (flashOverlay) flashOverlay.className = 'combo-flash-overlay';
+
     document.querySelectorAll('.note').forEach(note => note.remove());
     document.getElementById('result-screen').style.display = 'none';
     document.getElementById('start-game-btn').style.display = 'inline-block';
@@ -377,14 +392,13 @@ function updateUI() {
     document.getElementById('score').innerText = String(score).padStart(6, '0');
     document.getElementById('combo').innerText = combo;
 
-    // ПРОВЕРКА ТРИГГЕРОВ КОМБО ДЛЯ ЭФФЕКТОВ НА ФОНЕ
+    // ОБРАБОТКА ТРИГГЕРОВ КОМБО ДЛЯ МАСШТАБНЫХ ЭФФЕКТОВ НА ФОНЕ
     const flashOverlay = document.getElementById('combo-flash-overlay');
     if (flashOverlay) {
-        // Очищаем старые классы вспышек перед проверкой
         flashOverlay.className = 'combo-flash-overlay';
 
         if (combo === 10) {
-            void flashOverlay.offsetWidth; // Сброс анимации (рефлоу)
+            void flashOverlay.offsetWidth; 
             flashOverlay.classList.add('flash-combo-10');
         } else if (combo === 50) {
             void flashOverlay.offsetWidth;
