@@ -3,59 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>itzrubinv profile</title>
-    <!-- ПРОВЕРЬ НАЛИЧИЕ ЭТОЙ СТРОКИ: -->
+    <title>Osu!mania Profile Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<div class="main-layout">
-    
-   <div class="game-container">
-        <div class="game-info">
-            <div class="score-box">Score: <span id="score">000000</span></div>
-            <div class="combo-box">Combo: <span id="combo">0</span></div>
-        </div>
-        
-        <!-- Выбор сложности -->
-        <div class="difficulty-selector">
-            <label for="diff">Difficulty: </label>
-            <select id="diff" onchange="changeDifficulty()">
-                <option value="easy">Easy</option>
-                <option value="normal" selected>Normal</option>
-                <option value="hard">Hard</option>
-            </select>
-        </div>
-        
-        <div class="mania-board">
-            <div class="lane" id="lane-0"></div>
-            <div class="lane" id="lane-1"></div>
-            <div class="lane" id="lane-2"></div>
-            <div class="lane" id="lane-3"></div>
-            
-            <div class="hit-zone">
-                <div class="key-hint" id="key-0">D</div>
-                <div class="key-hint" id="key-1">F</div>
-                <div class="key-hint" id="key-2">J</div>
-                <div class="key-hint" id="key-3">K</div>
-            </div>
-            
-            <div id="hit-rating" class="hit-rating"></div>
+<body>
 
-            <!-- ОКНО РЕЗУЛЬТАТОВ (СКРЫТО ПО УМОЛЧАНИЮ) -->
-            <div id="result-screen" class="result-screen" style="display: none;">
-                <h2 class="result-title">RESULTS</h2>
-                <div class="result-rank" id="res-rank">A</div>
-                <div class="result-stats">
-                    <p>Score: <span id="res-score">000000</span></p>
-                    <p>Max Combo: <span id="res-combo">0</span></p>
-                    <p>Accuracy: <span id="res-acc">0%</span></p>
+    <div class="main-layout">
+        
+        <div class="game-container">
+            <div class="game-info">
+                <div class="score-box">Score: <span id="score">000000</span></div>
+                <div class="combo-box">Combo: <span id="combo">0</span></div>
+            </div>
+            
+            <div class="difficulty-selector">
+                <label for="diff">Difficulty: </label>
+                <select id="diff" onchange="changeDifficulty()">
+                    <option value="easy">Easy</option>
+                    <option value="normal" selected>Normal</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </div>
+            
+            <div class="mania-board">
+                <div class="lane" id="lane-0"></div>
+                <div class="lane" id="lane-1"></div>
+                <div class="lane" id="lane-2"></div>
+                <div class="lane" id="lane-3"></div>
+                
+                <div class="hit-zone">
+                    <div class="key-hint" id="key-0">D</div>
+                    <div class="key-hint" id="key-1">F</div>
+                    <div class="key-hint" id="key-2">J</div>
+                    <div class="key-hint" id="key-3">K</div>
                 </div>
-                <button class="result-close-btn" onclick="closeResults()">Back</button>
+                
+                <div id="hit-rating" class="hit-rating"></div>
+
+                <div id="result-screen" class="result-screen" style="display: none;">
+                    <h2 class="result-title">RESULTS</h2>
+                    <div class="result-rank" id="res-rank">A</div>
+                    <div class="result-stats">
+                        <p>Score: <span id="res-score">000000</span></p>
+                        <p>Max Combo: <span id="res-combo">0</span></p>
+                        <p>Accuracy: <span id="res-acc">0%</span></p>
+                    </div>
+                    <button class="result-close-btn" onclick="closeResults()">Back</button>
+                </div>
+            </div>
+            
+            <div class="game-controls">
+                <button id="start-game-btn" onclick="startManiaGame()">Start Game</button>
+                <button id="pause-game-btn" onclick="togglePauseGame()" style="display: none;">Pause</button>
+                <button id="reset-game-btn" onclick="resetManiaGame()" style="display: none;">Reset</button>
             </div>
         </div>
-        
-        <div class="game-controls">
-            <button id="start-game-btn" onclick="startManiaGame()">Start Game</button>
-            <button id="pause-game-btn" onclick="togglePauseGame()" style="display: none;">Pause</button>
-            <button id="reset-game-btn" onclick="resetManiaGame()" style="display: none;">Reset</button>
+
+        <div class="profile-container">
+            <div class="avatar-wrapper">
+                <img src="https://i.imgur.com/qHBMFD6.gif" alt="Avatar" class="osu-avatar">
+            </div>
+            <h1 class="osu-username">itzrubinv</h1>
+            <p class="osu-status">Click the circles! 🌟</p>
+            <div class="osu-links">
+                <a href="https://github.com/itzrubinv" target="_blank" class="osu-btn github">
+                    <span class="btn-icon">🐙</span> GitHub
+                </a>
+                <a href="https://t.me/твой_ник" target="_blank" class="osu-btn telegram">
+                    <span class="btn-icon">✈️</span> Telegram
+                </a>
+            </div>
         </div>
+
     </div>
+
+    <audio id="game-music" src="voice.mp3" preload="auto"></audio>
+
+    <script src="game.js"></script>
+</body>
+</html>
