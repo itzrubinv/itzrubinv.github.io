@@ -218,3 +218,33 @@ body {
     background: linear-gradient(to top, #ff66aa, #b500ff);
     box-shadow: 0 0 15px #ff66aa;
 }
+/* Контейнер для эффектов взрыва внутри дорожки */
+.hit-effect {
+    position: absolute;
+    bottom: 45px; /* Прямо над хит-зоной */
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,102,170,0.8) 50%, rgba(255,102,170,0) 100%);
+    pointer-events: none;
+    opacity: 1;
+    animation: burstEffect 0.2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+/* Для крайних дорожек (0 и 3) сделаем вспышку голубой под цвет их нот */
+.lane-0 .hit-effect, .lane-3 .hit-effect {
+    background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(0,255,255,0.8) 50%, rgba(0,255,255,0) 100%);
+}
+
+@keyframes burstEffect {
+    0% {
+        transform: translateX(-50%) scale(0.3);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-50%) scale(1.5);
+        opacity: 0;
+    }
+}
