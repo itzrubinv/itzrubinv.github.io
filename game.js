@@ -78,13 +78,13 @@ window.addEventListener('keydown', (e) => {
             // Проверка попадания в тайминг (зона от 310px до 355px)
             if (noteTop >= 310 && noteTop <= 355) {
                 // Идеально (300)
-                score += 300;
+                score += 200;
                 combo++;
                 showRating('300', '#ffcc00');
                 destroyNote(targetNote);
             } else if (noteTop >= 280 && noteTop < 310) {
                 // Чуть раньше/позже (100)
-                score += 100;
+                score += 52;
                 combo++;
                 showRating('100', '#00ffcc');
                 destroyNote(targetNote);
