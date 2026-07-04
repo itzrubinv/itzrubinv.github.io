@@ -1,19 +1,27 @@
+console.log("Osu!mania script loaded successfully!");
+
 let score = 0;
 let combo = 0;
 let gameInterval;
-let noteSpeed = 4; // Скорость падения нот
+let noteSpeed = 4; 
 let isPlaying = false;
 
 const keys = ['d', 'f', 'j', 'k'];
-const laneElements = [
-    document.getElementById('lane-0'),
-    document.getElementById('lane-1'),
-    document.getElementById('lane-2'),
-    document.getElementById('lane-3')
-];
+let laneElements = [];
 
+// Функция старта
 function startManiaGame() {
+    console.log("Start button clicked!");
     if (isPlaying) return;
+    
+    // Переопределим элементы тут, чтобы они точно нашлись в DOM
+    laneElements = [
+        document.getElementById('lane-0'),
+        document.getElementById('lane-1'),
+        document.getElementById('lane-2'),
+        document.getElementById('lane-3')
+    ];
+
     isPlaying = true;
     score = 0;
     combo = 0;
@@ -21,7 +29,6 @@ function startManiaGame() {
     document.getElementById('combo').innerText = '0';
     document.getElementById('start-game-btn').style.display = 'none';
 
-    // Спавним ноты каждые 600 миллисекунд
     gameInterval = setInterval(() => {
         let randomLane = Math.floor(Math.random() * 4);
         createNote(randomLane);
@@ -29,6 +36,8 @@ function startManiaGame() {
 }
 
 function createNote(laneIndex) {
+    if (!laneElements[laneIndex]) return;
+    
     const note = document.createElement('div');
     note.classList.add('note');
     note.style.top = '0px';
@@ -45,7 +54,6 @@ function createNote(laneIndex) {
         topPos += noteSpeed;
         note.style.top = topPos + 'px';
 
-        // Если нота улетела за нижний край (Miss)
         if (topPos > 360) {
             clearInterval(noteInterval);
             note.remove();
@@ -55,49 +63,42 @@ function createNote(laneIndex) {
         }
     }, 20);
 
-    // Привязываем интервал к самой ноте, чтобы удалить при нажатии
     note.dataset.intervalId = noteInterval;
 }
 
-// Отслеживание нажатий клавиатуры
 window.addEventListener('keydown', (e) => {
     if (!isPlaying) return;
     const keyIndex = keys.indexOf(e.key.toLowerCase());
     
     if (keyIndex !== -1) {
-        // Подсвечиваем клавишу визуально
         const keyHint = document.getElementById(`key-${keyIndex}`);
-        keyHint.classList.add('active');
+        if (keyHint) keyHint.classList.add('active');
 
-        // Ищем самую нижнюю ноту на этой дорожке
-        const notesInLane = laneElements[keyIndex].getElementsByClassName('note');
+        const notesInLane = laneElements[keyIndex] ? laneElements[keyIndex].getElementsByClassName('note') : [];
         if (notesInLane.length > 0) {
             const targetNote = notesInLane[0];
             const noteTop = parseInt(targetNote.style.top);
 
-            // Проверка попадания в тайминг (зона от 310px до 355px)
             if (noteTop >= 310 && noteTop <= 355) {
-                // Идеально (300)
-                score += 200;
+                score += 300;
                 combo++;
-                showRating('200', '#ffcc00');
+                showRating('300', '#ffcc00');
                 destroyNote(targetNote);
             } else if (noteTop >= 280 && noteTop < 310) {
-                // Чуть раньше/позже (100)
-                score += 52;
+                score += 100;
                 combo++;
-                showRating('200', '#00ffcc');
+                showRating('100', '#00ffcc');
                 destroyNote(targetNote);
             }
         }
     }
 });
 
-// Гасим подсветку при отпускании клавиши
 window.addEventListener('keyup', (e) => {
     const keyIndex = keys.indexOf(e.key.toLowerCase());
     if (keyIndex !== -1) {
-        document.getElementById(`key-${keyIndex}`).classList.remove('active');
+        const keyHint = document.getElementById(`key-${keyIndex}`);
+        if (keyHint) keyHint.classList.remove('active');
     }
 });
 
@@ -110,11 +111,11 @@ function destroyNote(note) {
 
 function showRating(text, color) {
     const ratingEl = document.getElementById('hit-rating');
+    if (!ratingEl) return;
     ratingEl.innerText = text;
     ratingEl.style.color = color;
     ratingEl.style.opacity = 1;
     
-    // Скрываем надпись через 200мс
     setTimeout(() => {
         ratingEl.style.opacity = 0;
     }, 200);
