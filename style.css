@@ -10,6 +10,10 @@ body {
     align-items: center;
     min-height: 100vh;
     box-sizing: border-box;
+    /* Отключаем выделение текста и жесты зума для мобилок */
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
 }
 
 /* Сетка: Надежный двухколоночный макет */
@@ -99,17 +103,18 @@ body {
     border-right: none;
 }
 
-/* Хит-зона (куда падают ноты) */
+/* Хит-зона (куда падают ноты и где происходят тапы) */
 .hit-zone {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 45px;
-    background: rgba(255, 102, 170, 0.15);
+    height: 60px; /* Увеличено для удобства тапа пальцем */
+    background: rgba(255, 102, 170, 0.1);
     border-top: 2px solid #ff66aa;
     display: flex;
     z-index: 10;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .key-hint {
@@ -119,8 +124,10 @@ body {
     justify-content: center;
     font-weight: bold;
     color: #b9b5c4;
-    font-size: 0.9rem;
-    transition: background 0.1s;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.05s;
+    height: 100%;
 }
 
 .key-hint.active {
@@ -129,7 +136,7 @@ body {
     text-shadow: 0 0 5px #fff;
 }
 
-/* ПАДАЮЩИЕ НОТЫ (Увеличены в 2 раза, со скруглением) */
+/* Падающие ноты */
 .note {
     position: absolute;
     width: 100%;
@@ -139,7 +146,6 @@ body {
     left: 0;
     z-index: 2;
     border-radius: 6px;
-    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 #lane-1 .note, #lane-2 .note {
@@ -159,7 +165,7 @@ body {
     box-shadow: 0 0 18px #ff66aa;
 }
 
-/* Анимация растворения слайда при зажатии/отпускании */
+/* Анимация растворения слайда */
 .note.fade-out-hold {
     animation: holdFadeOut 0.25s ease-out forwards;
     pointer-events: none;
@@ -173,7 +179,7 @@ body {
 /* Текст комбо и точности */
 .hit-rating {
     position: absolute;
-    top: 50%;
+    top: 45%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 1.8rem;
@@ -378,7 +384,7 @@ body {
     background: #ff4499;
 }
 
-/* --- АУДИО ВИЗУАЛИЗАТОР (СПЕКТР - ТЕМНЫЙ И ПРОЗРАЧНЫЙ) --- */
+/* --- АУДИО ВИЗУАЛИЗАТОР --- */
 .visualizer-canvas {
     position: absolute;
     top: 0;
@@ -475,7 +481,7 @@ body {
 
 .hit-effect {
     position: absolute;
-    bottom: 45px;
+    bottom: 60px; /* Смещено с учетом новой высоты хит-зоны */
     left: 50%;
     transform: translateX(-50%) scale(0);
     width: 40px;

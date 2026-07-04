@@ -1,4 +1,4 @@
-console.log("Osu!mania: Ultimate Game-Sense & Settings Edition Loaded!");
+console.log("Osu!mania: Multi-Layout & Mobile Touch Edition Loaded!");
 
 let score = 0;
 let combo = 0;
@@ -22,7 +22,8 @@ let perfectHits = 0;
 let noteSpeed = 6;      
 let currentDiff = 'normal';
 
-const keys = ['d', 'f', 'j', 'k'];
+// Использование e.code вместо e.key решает проблему с любыми раскладками клавиатуры
+const keyCodes = ['KeyD', 'KeyF', 'KeyJ', 'KeyK'];
 let laneElements = [];
 const music = document.getElementById('game-music');
 const board = document.querySelector('.mania-board');
@@ -31,10 +32,10 @@ const avatar = document.querySelector('.osu-avatar');
 let activeHoldNotes = [null, null, null, null];
 let isKeyPressed = [false, false, false, false];
 
-// НАСТРОЙКИ ЗВУКА И ТАЙМИНГОВ По Умолчанию (1.0 = 100%)
+// НАСТРОЙКИ ЗВУКА И ТАЙМИНГОВ
 let masterVolume = 1.0;
 let effectsVolume = 1.0;
-let audioOffset = 0; // в миллисекундах
+let audioOffset = 0; 
 
 // Переключение видимости панели настроек
 function toggleSettings() {
@@ -44,7 +45,7 @@ function toggleSettings() {
     }
 }
 
-// Обновление значений громкости и офсета на лету из ползунков
+// Обновление значений громкости и офсета
 function updateVolumeSettings() {
     const masterSlider = document.getElementById('volume-master');
     const effectsSlider = document.getElementById('volume-effects');
@@ -67,7 +68,7 @@ function updateVolumeSettings() {
     }
 }
 
-// Мгновенное воспроизведение звуков без заиканий с учетом настроек громкости
+// Воспроизведение звуков
 function playSound(soundId) {
     const sound = document.getElementById(soundId);
     if (sound) {
@@ -246,77 +247,111 @@ function createNote(laneIndex, isHold) {
     note.dataset.height = noteHeight;
 }
 
-window.addEventListener('keydown', (e) => {
-    if (!isPlaying || isPaused) return;
-    const keyIndex = keys.indexOf(e.key.toLowerCase());
-    
-    if (keyIndex !== -1 && !isKeyPressed[keyIndex]) {
-        isKeyPressed[keyIndex] = true;
-        const keyHint = document.getElementById(`key-${keyIndex}`);
-        if (keyHint) keyHint.classList.add('active');
+// Единая логика для обработки нажатия (клавиатура или тач)
+function triggerLanePress(keyIndex) {
+    if (keyIndex === -1 || isKeyPressed[keyIndex]) return;
+    isKeyPressed[keyIndex] = true;
 
-        const notesInLane = laneElements[keyIndex] ? laneElements[keyIndex].getElementsByClassName('note') : [];
-        if (notesInLane.length > 0) {
-            const targetNote = notesInLane[0];
-            
-            if (targetNote.classList.contains('fade-out-hold')) return;
+    const keyHint = document.getElementById(`key-${keyIndex}`);
+    if (keyHint) keyHint.classList.add('active');
 
-            const noteTop = parseInt(targetNote.style.top);
-            const isHold = targetNote.dataset.isHold === "true";
-            const noteHeight = parseInt(targetNote.dataset.height);
-            const hitHitbox = noteTop + noteHeight;
+    const notesInLane = laneElements[keyIndex] ? laneElements[keyIndex].getElementsByClassName('note') : [];
+    if (notesInLane.length > 0) {
+        const targetNote = notesInLane[0];
+        
+        if (targetNote.classList.contains('fade-out-hold')) return;
 
-            let adjustedHitbox = hitHitbox + (audioOffset / 20);
+        const noteTop = parseInt(targetNote.style.top);
+        const isHold = targetNote.dataset.isHold === "true";
+        const noteHeight = parseInt(targetNote.dataset.height);
+        const hitHitbox = noteTop + noteHeight;
 
-            if (adjustedHitbox >= 340 && adjustedHitbox <= 400) {
-                createHitEffect(keyIndex);
-                hitNotesCount++;
+        let adjustedHitbox = hitHitbox + (audioOffset / 20);
 
-                if (isHold) {
-                    activeHoldNotes[keyIndex] = targetNote;
-                    score += 100;
-                    combo++;
-                    showRating('HOLD!', '#00ffcc');
-                    playSound('hit-sound');
-                } else {
-                    perfectHits++;
-                    score += 300;
-                    combo++;
-                    showRating('300', '#ffcc00');
-                    playSound('hit-sound');
-                    destroyNote(targetNote);
-                }
-                if (combo > maxCombo) maxCombo = combo;
-                updateUI();
+        // Хитбокс немного расширен для удобства тач-ввода (330-410 вместо 340-400)
+        if (adjustedHitbox >= 330 && adjustedHitbox <= 410) {
+            createHitEffect(keyIndex);
+            hitNotesCount++;
+
+            if (isHold) {
+                activeHoldNotes[keyIndex] = targetNote;
+                score += 100;
+                combo++;
+                showRating('HOLD!', '#00ffcc');
+                playSound('hit-sound');
+            } else {
+                perfectHits++;
+                score += 300;
+                combo++;
+                showRating('300', '#ffcc00');
+                playSound('hit-sound');
+                destroyNote(targetNote);
             }
-        }
-    }
-});
-
-window.addEventListener('keyup', (e) => {
-    const keyIndex = keys.indexOf(e.key.toLowerCase());
-    if (keyIndex !== -1) {
-        isKeyPressed[keyIndex] = false;
-        const keyHint = document.getElementById(`key-${keyIndex}`);
-        if (keyHint) keyHint.classList.remove('active');
-
-        if (activeHoldNotes[keyIndex]) {
-            const note = activeHoldNotes[keyIndex];
-            activeHoldNotes[keyIndex] = null;
-            
-            clearInterval(note.dataset.intervalId);
-            note.classList.add('fade-out-hold');
-            createHitEffect(keyIndex); 
-            playSound('hit-sound');   
-            
-            setTimeout(() => {
-                note.remove();
-            }, 250);
-            
-            showRating('RELEASE!', '#b500ff');
+            if (combo > maxCombo) maxCombo = combo;
             updateUI();
         }
     }
+}
+
+// Единая логика для обработки отпускания (клавиатура или тач)
+function triggerLaneRelease(keyIndex) {
+    if (keyIndex === -1) return;
+    isKeyPressed[keyIndex] = false;
+
+    const keyHint = document.getElementById(`key-${keyIndex}`);
+    if (keyHint) keyHint.classList.remove('active');
+
+    if (activeHoldNotes[keyIndex]) {
+        const note = activeHoldNotes[keyIndex];
+        activeHoldNotes[keyIndex] = null;
+        
+        clearInterval(note.dataset.intervalId);
+        note.classList.add('fade-out-hold');
+        createHitEffect(keyIndex); 
+        playSound('hit-sound');   
+        
+        setTimeout(() => {
+            note.remove();
+        }, 250);
+        
+        showRating('RELEASE!', '#b500ff');
+        updateUI();
+    }
+}
+
+// --- СЛУШАТЕЛИ КЛАВИАТУРЫ ---
+window.addEventListener('keydown', (e) => {
+    if (!isPlaying || isPaused) return;
+    const keyIndex = keyCodes.indexOf(e.code); // Проверка физического кода клавиши
+    triggerLanePress(keyIndex);
+});
+
+window.addEventListener('keyup', (e) => {
+    const keyIndex = keyCodes.indexOf(e.code);
+    triggerLaneRelease(keyIndex);
+});
+
+// --- СЛУШАТЕЛИ ТАЧ-ИНТЕРФЕЙСА (МОБИЛКИ) ---
+document.querySelectorAll('.key-hint').forEach(button => {
+    const laneIndex = parseInt(button.getAttribute('data-lane'));
+
+    // Обработка касания экрана пальцем
+    button.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // Предотвращаем симуляцию клика мышкой и зум
+        if (!isPlaying || isPaused) return;
+        triggerLanePress(laneIndex);
+    }, { passive: false });
+
+    // Обработка отпускания пальца
+    button.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        triggerLaneRelease(laneIndex);
+    }, { passive: false });
+    
+    button.addEventListener('touchcancel', (e) => {
+        e.preventDefault();
+        triggerLaneRelease(laneIndex);
+    }, { passive: false });
 });
 
 function endGameAndShowResults() {
@@ -382,6 +417,7 @@ function resetManiaGame() {
     combo = 0;
     maxCombo = 0;
     activeHoldNotes = [null, null, null, null];
+    isKeyPressed = [false, false, false, false];
     
     clearInterval(gameInterval);
     clearInterval(beatInterval);
@@ -400,6 +436,7 @@ function resetManiaGame() {
     if (flashOverlay) flashOverlay.className = 'combo-flash-overlay';
 
     document.querySelectorAll('.note').forEach(note => note.remove());
+    document.querySelectorAll('.key-hint').forEach(kh => kh.classList.remove('active'));
     document.getElementById('result-screen').style.display = 'none';
     document.getElementById('start-game-btn').style.display = 'inline-block';
     document.getElementById('pause-game-btn').style.display = 'none';
