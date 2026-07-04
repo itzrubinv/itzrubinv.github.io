@@ -1,187 +1,616 @@
-/* ==========================================================================
-   1. СБРОС СТИЛЕЙ И БАЗОВЫЕ НАСТРОЙКИ ( box-sizing )
-   ========================================================================== */
+/* --- ОБЩИЕ НАСТРОЙКИ ЭКРАНА --- */
 *, *::before, *::after {
     box-sizing: border-box;
 }
 
 body {
+    background-color: #121014;
+    color: #ffffff;
+    font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
-    padding: 0;
-    background-color: #0d0c10;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #fff;
-    overflow-x: hidden;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+    /* Отключаем выделение текста и жесты зума для мобилок */
     user-select: none;
     -webkit-user-select: none;
+    touch-action: manipulation;
 }
 
-/* ==========================================================================
-   2. ФОНОВЫЕ ЭФФЕКТЫ (Дым и Вспышки Комбо)
-   ========================================================================== */
-.fog-container {
-    position: fixed;
+/* Сетка: Надежный двухколоночный макет */
+.main-layout {
+    display: flex;
+    gap: 40px;
+    max-width: 950px;
+    width: 100%;
+    align-items: flex-start;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+/* --- СТИЛИ ИГРЫ OSU!MANIA (ЛЕВАЯ КОЛОНКА) --- */
+.game-container {
+    background: #1c1a21;
+    border-radius: 24px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid #2e2a36;
+    width: 280px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    z-index: 5;
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 15px;
+    font-family: monospace;
+    font-size: 1.1rem;
+    color: #ff66aa;
+}
+
+/* Селектор сложности */
+.difficulty-selector {
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: #b9b5c4;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.difficulty-selector select {
+    background: #2e2a36;
+    border: 2px solid #ff66aa;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.difficulty-selector select:hover {
+    box-shadow: 0 0 10px rgba(255, 102, 170, 0.5);
+    background: #383344;
+}
+
+/* Игровое поле */
+.mania-board {
+    position: relative;
+    width: 240px;
+    height: 400px;
+    background: #0d0c0f;
+    border: 3px solid #383344;
+    border-radius: 8px;
+    display: flex;
+    overflow: hidden;
+    transition: all 0.1s ease;
+}
+
+.lane {
+    flex: 1;
+    height: 100%;
+    border-right: 1px solid #232029;
+    position: relative;
+}
+
+.lane:last-child {
+    border-right: none;
+}
+
+/* Хит-зона (куда падают ноты и где происходят тапы) */
+.hit-zone {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px; /* Увеличено для удобства тапа пальцем */
+    background: rgba(255, 102, 170, 0.1);
+    border-top: 2px solid #ff66aa;
+    display: flex;
+    z-index: 10;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.key-hint {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #b9b5c4;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.05s;
+    height: 100%;
+}
+
+.key-hint.active {
+    background: rgba(255, 102, 170, 0.4);
+    color: #fff;
+    text-shadow: 0 0 5px #fff;
+}
+
+/* Падающие ноты */
+.note {
+    position: absolute;
+    width: 100%;
+    height: 30px;
+    background: #00ffff;
+    box-shadow: 0 0 12px #00ffff;
+    left: 0;
+    z-index: 2;
+    border-radius: 6px;
+}
+
+#lane-1 .note, #lane-2 .note {
+    background: #ff66aa;
+    box-shadow: 0 0 12px #ff66aa;
+}
+
+/* Длинные ноты (Hold Notes / Слайды) */
+.note.hold-note {
+    background: linear-gradient(to top, #00ffff, #0088ff);
+    border-radius: 10px;
+    box-shadow: 0 0 18px #00ffff;
+}
+
+#lane-1 .note.hold-note, #lane-2 .note.hold-note {
+    background: linear-gradient(to top, #ff66aa, #b500ff);
+    box-shadow: 0 0 18px #ff66aa;
+}
+
+/* Анимация растворения слайда */
+.note.fade-out-hold {
+    animation: holdFadeOut 0.25s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes holdFadeOut {
+    0% { opacity: 1; transform: scale(1); filter: brightness(1.5); }
+    100% { opacity: 0; transform: scale(1.1) translateY(12px); filter: brightness(2); }
+}
+
+/* Текст комбо и точности */
+.hit-rating {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.8rem;
+    font-weight: 900;
+    pointer-events: none;
+    z-index: 20;
+    transition: opacity 0.1s ease;
+}
+
+/* --- СТИЛИ ПРОФИЛЯ (ПРАВАЯ КОЛОНКА) --- */
+.profile-container {
+    background: rgba(38, 35, 45, 0.85);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 102, 170, 0.2);
+    border-radius: 24px;
+    padding: 40px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
+    flex-shrink: 0;
+    z-index: 5;
+}
+
+.avatar-wrapper {
+    width: 130px;
+    height: 130px;
+    margin: 0 auto 20px;
+}
+
+.osu-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #ff66aa;
+    box-shadow: 0 0 20px #ff66aa;
+    transition: transform 0.3s;
+}
+
+.osu-avatar:hover {
+    transform: scale(1.05);
+}
+
+.osu-username {
+    font-size: 2rem;
+    margin: 10px 0 5px;
+    font-weight: 800;
+}
+
+.osu-status {
+    color: #b9b5c4;
+    font-size: 0.9rem;
+    margin-bottom: 25px;
+}
+
+.osu-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.osu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: white;
+    text-decoration: none;
+    padding: 12px;
+    font-weight: 600;
+    background: #2e2a36;
+    border-left: 6px solid #ff66aa;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.osu-btn:hover {
+    background: #ff66aa;
+    transform: translateX(6px);
+    box-shadow: 0 0 15px rgba(255, 102, 170, 0.6);
+}
+
+/* --- КНОПКИ УПРАВЛЕНИЯ ИГРОЙ --- */
+.game-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: center;
+    width: 100%;
+}
+
+#start-game-btn, 
+#pause-game-btn, 
+#reset-game-btn {
+    margin-top: 0 !important;
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    outline: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border: none;
+}
+
+#start-game-btn {
+    background: #ff66aa;
+    color: white;
+    width: 100%;
+}
+#start-game-btn:hover {
+    transform: scale(1.03);
+    background: #ff4499;
+    box-shadow: 0 0 15px rgba(255, 102, 170, 0.6);
+}
+
+#pause-game-btn {
+    background: #1c1a21;
+    border: 2px solid #00ffcc !important;
+    color: #00ffcc;
+}
+#pause-game-btn:hover {
+    transform: scale(1.05);
+    background: #00ffcc;
+    color: #1c1a21;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.6);
+}
+
+#reset-game-btn {
+    background: #1c1a21;
+    border: 2px solid #ff4444 !important;
+    color: #ff4444;
+}
+#reset-game-btn:hover {
+    transform: scale(1.05);
+    background: #ff4444;
+    color: white;
+    box-shadow: 0 0 15px rgba(255, 68, 68, 0.6);
+}
+
+/* --- ЭКРАН РЕЗУЛЬТАТОВ --- */
+.result-screen {
+    position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
+    background: rgba(13, 12, 15, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    animation: fadeIn 0.4s ease forwards;
+}
+
+.result-title {
+    font-size: 1.5rem;
+    color: #ff66aa;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+}
+
+.result-rank {
+    font-size: 5rem;
+    font-weight: 900;
+    color: #ffcc00;
+    text-shadow: 0 0 25px rgba(255, 204, 0, 0.6);
+    margin: 10px 0;
+}
+
+.result-stats {
+    text-align: left;
+    width: 75%;
+    font-family: monospace;
+    font-size: 1rem;
+    color: #b9b5c4;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.result-stats span {
+    color: #fff;
+    font-weight: bold;
+}
+
+.result-close-btn {
+    background: #ff66aa;
+    border: none;
+    color: white;
+    padding: 8px 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.result-close-btn:hover {
+    transform: scale(1.05);
+    background: #ff4499;
+}
+
+/* --- АУДИО ВИЗУАЛИЗАТОР --- */
+.visualizer-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 1;
+    pointer-events: none;
+    opacity: 0.15;
+}
+
+/* --- ЭФФЕКТЫ ОСНОВНОГО ФОНА САЙТА --- */
+.fog-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 250px;
+    z-index: -1;
     overflow: hidden;
     pointer-events: none;
-    opacity: 0.3;
 }
 
 .fog-layer {
     position: absolute;
     width: 200%;
     height: 100%;
-    background: radial-gradient(circle at 50% 50%, rgba(255, 102, 170, 0.15), transparent 60%);
-    animation: fogMove 20s linear infinite;
+    background: radial-gradient(circle at 50% 120%, rgba(255, 102, 170, 0.18) 0%, rgba(181, 0, 255, 0.05) 40%, transparent 70%);
+    bottom: -50px;
+    left: 0;
+    filter: blur(40px);
+    animation: waveFog 12s ease-in-out infinite alternate;
 }
 
-@keyframes fogMove {
-    0% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(-25%, 5%) scale(1.2); }
-    100% { transform: translate(0, 0) scale(1); }
+@keyframes waveFog {
+    0% { transform: translateX(0) scaleY(1); }
+    50% { transform: translateX(-15%) scaleY(1.2) translateY(-10px); }
+    100% { transform: translateX(-30%) scaleY(0.9) translateY(5px); }
 }
 
 .combo-flash-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 5;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
     pointer-events: none;
-    mix-blend-mode: screen;
     opacity: 0;
-    transition: opacity 0.1s ease-out;
+    transition: opacity 0.1s ease;
 }
 
-.flash-combo-10 { animation: flashPink 0.4s ease-out; }
-.flash-combo-50 { animation: flashCyan 0.5s ease-out; }
-.flash-combo-100 { animation: flashGold 0.6s ease-out; }
-
-@keyframes flashPink {
-    0% { opacity: 0.5; background: #ff66aa; }
-    100% { opacity: 0; background: transparent; }
-}
-@keyframes flashCyan {
-    0% { opacity: 0.6; background: #00ffcc; }
-    100% { opacity: 0; background: transparent; }
-}
-@keyframes flashGold {
-    0% { opacity: 0.8; background: #ffcc00; }
-    100% { opacity: 0; background: transparent; }
+.flash-combo-10 {
+    background: radial-gradient(circle, rgba(255, 102, 170, 0.4) 0%, transparent 80%);
+    animation: flashTrigger 0.6s ease-out forwards;
 }
 
-/* ==========================================================================
-   3. ФИКСИРОВАННАЯ ИЗОЛИРОВАННАЯ ПАНЕЛЬ НАСТРОЕК (Исправление наложений)
-   ========================================================================== */
+.flash-combo-50 {
+    background: radial-gradient(circle, rgba(0, 255, 204, 0.45) 0%, transparent 80%);
+    animation: flashTrigger 0.7s ease-out forwards;
+}
+
+.flash-combo-100 {
+    background: radial-gradient(circle, rgba(255, 204, 0, 0.5) 0%, transparent 80%);
+    animation: flashTrigger 0.9s ease-out forwards;
+}
+
+@keyframes flashTrigger {
+    0% { opacity: 0; transform: scale(0.8); }
+    15% { opacity: 1; transform: scale(1.1); }
+    100% { opacity: 0; transform: scale(1); }
+}
+
+/* --- АНИМАЦИИ И ПУЛЬСАЦИЯ --- */
+.mania-board.pulse {
+    animation: boardPulse 0.2s ease-in-out;
+}
+
+.osu-avatar.pulse {
+    animation: avatarPulse 0.2s ease-in-out;
+}
+
+@keyframes boardPulse {
+    0% { transform: scale(1); border-color: #ff66aa; }
+    50% { transform: scale(1.02); border-color: #ffffff; box-shadow: 0 0 20px rgba(255, 102, 170, 0.6); }
+    100% { transform: scale(1); border-color: #383344; }
+}
+
+@keyframes avatarPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); box-shadow: 0 0 35px #ff66aa; }
+    100% { transform: scale(1); }
+}
+
+.hit-effect {
+    position: absolute;
+    bottom: 60px; /* Смещено с учетом новой высоты хит-зоны */
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,102,170,0.8) 50%, rgba(255,102,170,0) 100%);
+    pointer-events: none;
+    opacity: 1;
+    animation: burstEffect 0.2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+    z-index: 5;
+}
+
+.lane-0 .hit-effect, .lane-3 .hit-effect {
+    background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(0,255,204,0.8) 50%, rgba(0,255,204,0) 100%);
+}
+
+@keyframes burstEffect {
+    0% { transform: translateX(-50%) scale(0.3); opacity: 1; }
+    100% { transform: translateX(-50%) scale(1.5); opacity: 0; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* --- КНОПКА И ОКОШКО НАСТРОЕК (ФИКСИРОВАННЫЕ НА СТРАНИЦЕ) --- */
 .settings-toggle-btn {
     position: fixed;
-    top: 20px;
-    right: 20px;
-    background: rgba(46, 42, 54, 0.75);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 102, 170, 0.4);
+    top: 25px;
+    right: 25px;
+    background: rgba(46, 42, 54, 0.6);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 102, 170, 0.3);
+    padding: 10px;
     border-radius: 50%;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     cursor: pointer;
     color: #b9b5c4;
-    transition: transform 0.2s, background 0.2s, color 0.2s;
+    transition: transform 0.2s, color 0.2s, background 0.2s;
     z-index: 1000;
     width: 45px;
     height: 45px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
 .settings-toggle-btn:hover {
-    transform: rotate(45deg) scale(1.05);
-    background: rgba(46, 42, 54, 0.95);
     color: #ff66aa;
-    border-color: rgba(255, 102, 170, 0.8);
+    background: rgba(46, 42, 54, 0.9);
+    transform: rotate(45deg) scale(1.05);
+    box-shadow: 0 0 12px rgba(255, 102, 170, 0.4);
 }
 
 .settings-sidebar {
     position: fixed;
     top: 0;
-    right: -320px; /* Полностью скрыт за экраном по умолчанию */
+    right: -320px;
     width: 300px;
     height: 100vh;
-    background: rgba(20, 18, 24, 0.98);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-left: 2px solid rgba(255, 102, 170, 0.4);
-    z-index: 2000; /* Отображается поверх абсолютно всего контента */
+    background: rgba(20, 18, 24, 0.95);
+    backdrop-filter: blur(15px);
+    border-left: 2px solid rgba(255, 102, 170, 0.3);
+    z-index: 2000;
     padding: 30px 20px;
-    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.8);
+    box-sizing: border-box;
     transition: right 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.7);
     display: flex;
     flex-direction: column;
 }
 
 .settings-sidebar.open {
-    right: 0; /* Выезжает по клику */
+    right: 0;
 }
 
 .settings-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 2px solid #2e2a36;
     padding-bottom: 15px;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 }
 
 .settings-header h3 {
     margin: 0;
-    font-size: 1.4rem;
     color: #ff66aa;
-    text-shadow: 0 0 10px rgba(255, 102, 170, 0.3);
+    font-size: 1.4rem;
+    letter-spacing: 1px;
 }
 
 .settings-close-x {
-    background: none;
+    background: transparent;
     border: none;
-    color: #888;
-    font-size: 1.8rem;
+    color: #b9b5c4;
+    font-size: 2rem;
     cursor: pointer;
-    transition: color 0.2s;
     line-height: 1;
-    padding: 0;
 }
 
 .settings-close-x:hover {
     color: #ff4444;
 }
 
-.settings-body {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-}
-
 .setting-item {
+    margin-bottom: 20px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    text-align: left;
 }
 
 .setting-item label {
-    font-size: 0.95rem;
-    color: #ccc;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #e2dfeb;
+    margin-bottom: 8px;
     display: flex;
     justify-content: space-between;
 }
 
 .setting-item label span {
-    color: #ff66aa;
-    font-weight: bold;
+    color: #00ffcc;
+    font-family: monospace;
 }
 
 .setting-item input[type="range"] {
@@ -200,406 +629,25 @@ body {
     border-radius: 50%;
     background: #ff66aa;
     cursor: pointer;
-    box-shadow: 0 0 8px rgba(255, 102, 170, 0.6);
     transition: transform 0.1s;
 }
 
 .setting-item input[type="range"]::-webkit-slider-thumb:hover {
     transform: scale(1.2);
+    background: #ff4499;
 }
 
 .setting-hint {
     font-size: 0.75rem;
-    color: #666;
-    margin-top: 2px;
+    color: #787285;
+    margin-top: 4px;
 }
 
-/* ==========================================================================
-   4. ДВУХКОЛОНОЧНЫЙ ГЛАВНЫЙ МАКЕТ (Main Layout)
-   ========================================================================== */
-.main-layout {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    gap: 40px;
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* Адаптивность для мобильных экранов: перестраиваем в одну колонку */
+/* Адаптивность */
 @media (max-width: 768px) {
     .main-layout {
         flex-direction: column-reverse;
+        align-items: center;
         gap: 20px;
-        padding: 10px;
     }
-}
-
-/* ==========================================================================
-   5. ЛЕВАЯ КОЛОНКА — ИГРОВОЙ БЛОК (Game Container)
-   ========================================================================== */
-.game-container {
-    background: rgba(25, 22, 30, 0.85);
-    border: 2px solid rgba(255, 102, 170, 0.3);
-    border-radius: 24px;
-    padding: 25px;
-    width: 100%;
-    max-width: 420px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.game-info {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #ff66aa;
-    text-shadow: 0 0 10px rgba(255, 102, 170, 0.4);
-    margin-bottom: 15px;
-}
-
-.difficulty-selector {
-    margin-bottom: 15px;
-    font-size: 0.95rem;
-    color: #b9b5c4;
-}
-
-.difficulty-selector select {
-    background: #1c1922;
-    border: 1px solid rgba(255, 102, 170, 0.5);
-    color: #fff;
-    padding: 4px 10px;
-    border-radius: 8px;
-    outline: none;
-    cursor: pointer;
-}
-
-/* ==========================================================================
-   6. ИГРОВОЕ ПОЛЕ (Mania Board & Tracks)
-   ========================================================================== */
-.mania-board {
-    position: relative;
-    width: 280px;
-    height: 400px;
-    background: #09080c;
-    border: 3px solid #1f1a26;
-    border-radius: 12px;
-    overflow: hidden;
-    display: flex;
-}
-
-/* Эквалайзер позади нот */
-.visualizer-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.35;
-}
-
-/* Игровые дорожки */
-.lane {
-    position: relative;
-    flex: 1;
-    height: 100%;
-    border-right: 1px solid rgba(255, 255, 255, 0.04);
-    z-index: 2;
-}
-.lane:last-child {
-    border-right: none;
-}
-
-/* Ноты */
-.note {
-    position: absolute;
-    width: 90%;
-    left: 5%;
-    height: 24px;
-    background: linear-gradient(180deg, #ff66aa, #b500ff);
-    border-radius: 6px;
-    box-shadow: 0 0 12px rgba(255, 102, 170, 0.8);
-}
-
-.hold-note {
-    background: linear-gradient(180deg, #00ffcc, #0088cc);
-    box-shadow: 0 0 15px rgba(0, 255, 204, 0.8);
-    border-radius: 8px;
-}
-
-.fade-out-hold {
-    animation: fadeOutHold 0.25s forwards;
-}
-@keyframes fadeOutHold {
-    to { opacity: 0; transform: scale(0.8); }
-}
-
-/* Хит-зона и Тач-кнопки управления */
-.hit-zone {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 50px;
-    background: rgba(255, 102, 170, 0.15);
-    border-top: 3px solid #ff66aa;
-    display: flex;
-    z-index: 3;
-}
-
-.key-hint {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    color: rgba(255, 255, 255, 0.6);
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(30, 20, 40, 0.4);
-    cursor: pointer;
-    transition: background 0.05s;
-    touch-action: cubic-bezier;
-}
-.key-hint:last-child { border-right: none; }
-
-.key-hint.active {
-    background: rgba(255, 102, 170, 0.6);
-    color: #fff;
-    text-shadow: 0 0 8px #fff;
-}
-
-/* Эффекты взрыва при попадании по полосе */
-.hit-effect {
-    position: absolute;
-    bottom: 50px;
-    width: 100%;
-    height: 80px;
-    background: linear-gradient(to top, rgba(255, 102, 170, 0.6), transparent);
-    animation: hitExplosion 0.2s ease-out forwards;
-    pointer-events: none;
-    z-index: 2;
-}
-@keyframes hitExplosion {
-    0% { opacity: 1; transform: scaleX(1); }
-    100% { opacity: 0; transform: scaleX(1.3); }
-}
-
-/* Оценка точности клика (300, Miss) */
-.hit-rating {
-    position: absolute;
-    top: 55%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2rem;
-    font-weight: 900;
-    pointer-events: none;
-    z-index: 4;
-    opacity: 0;
-    transition: opacity 0.05s ease-in;
-    text-shadow: 0 0 15px rgba(0, 0, 0, 1), 0 0 5px rgba(0, 0, 0, 0.8);
-    font-family: 'Impact', sans-serif;
-    letter-spacing: 2px;
-}
-
-/* Кнопки Начать / Сбросить */
-.game-controls {
-    margin-top: 20px;
-    display: flex;
-    gap: 10px;
-    width: 100%;
-}
-
-.game-controls button, .result-close-btn, #start-game-btn {
-    flex: 1;
-    background: #ff66aa;
-    border: none;
-    color: #fff;
-    padding: 12px 20px;
-    border-radius: 50px;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 1rem;
-    box-shadow: 0 5px 15px rgba(255, 102, 170, 0.3);
-    transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
-}
-
-.game-controls button:hover, .result-close-btn:hover, #start-game-btn:hover {
-    background: #ff4499;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(255, 102, 170, 0.5);
-}
-
-/* ==========================================================================
-   7. ОКНО РЕЗУЛЬТАТОВ (Results Screen)
-   ========================================================================== */
-.result-screen {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(13, 11, 16, 0.95);
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-
-.result-title {
-    color: #ff66aa;
-    font-size: 1.8rem;
-    margin-bottom: 5px;
-    letter-spacing: 3px;
-}
-
-.result-rank {
-    font-size: 5rem;
-    font-weight: 900;
-    margin: 10px 0;
-    text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
-    font-family: 'Impact', sans-serif;
-}
-
-.result-stats {
-    text-align: left;
-    width: 80%;
-    margin-bottom: 25px;
-    font-size: 1.1rem;
-    line-height: 1.6;
-}
-
-.result-stats p {
-    margin: 6px 0;
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-}
-
-.result-stats span {
-    color: #ff66aa;
-    font-weight: bold;
-}
-
-/* ==========================================================================
-   8. ПРАВАЯ КОЛОНКА — КАРТОЧКА ПРОФИЛЯ (Profile Container)
-   ========================================================================== */
-.profile-container {
-    background: rgba(25, 22, 30, 0.85);
-    border: 2px solid rgba(255, 102, 170, 0.3);
-    border-radius: 24px;
-    padding: 35px 30px;
-    width: 100%;
-    max-width: 350px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.avatar-wrapper {
-    position: relative;
-    width: 130px;
-    height: 130px;
-    margin-bottom: 20px;
-}
-
-.osu-avatar {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid #ff66aa;
-    box-shadow: 0 0 25px rgba(255, 102, 170, 0.6);
-}
-
-/* Пульсация аватарки и поля в такт битам музыки */
-.pulse {
-    animation: beatPulse 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-@keyframes beatPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.03); }
-    100% { transform: scale(1); }
-}
-
-.osu-username {
-    margin: 0 0 8px 0;
-    font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    background: linear-gradient(45deg, #fff, #ff99cc);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.osu-status {
-    color: #b9b5c4;
-    font-size: 0.95rem;
-    margin: 0 0 25px 0;
-}
-
-/* Ссылки (Социальные кнопки в профиле) */
-.osu-links {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.osu-btn {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 12px;
-    border-radius: 14px;
-    text-decoration: none;
-    color: #fff;
-    font-weight: 600;
-    font-size: 1rem;
-    background: rgba(46, 42, 54, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    transition: transform 0.2s, background 0.2s, border-color 0.2s;
-}
-
-.osu-btn:hover {
-    transform: translateY(-2px);
-    background: rgba(60, 54, 72, 0.8);
-}
-
-.osu-btn.github {
-    border-left: 4px solid #fff;
-}
-.osu-btn.github:hover {
-    border-color: #ff66aa;
-}
-
-.osu-btn.telegram {
-    border-left: 4px solid #0088cc;
-}
-.osu-btn.telegram:hover {
-    border-color: #0088cc;
-}
-
-.btn-icon {
-    font-size: 1.2rem;
 }
