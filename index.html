@@ -1,21 +1,40 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rubinv profile</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+<div class="main-layout">
+    
+    <!-- ЛЕВАЯ ЧАСТЬ: ИГРА OSU!MANIA -->
+    <div class="game-container">
+        <div class="game-info">
+            <div class="score-box">Score: <span id="score">000000</span></div>
+            <div class="combo-box">Combo: <span id="combo">0</span></div>
+        </div>
+        
+        <div class="mania-board">
+            <!-- 4 дорожки для нот -->
+            <div class="lane" id="lane-0"></div>
+            <div class="lane" id="lane-1"></div>
+            <div class="lane" id="lane-2"></div>
+            <div class="lane" id="lane-3"></div>
+            
+            <!-- Зона нажатия (куда прилетают ноты) -->
+            <div class="hit-zone">
+                <div class="key-hint" id="key-0">D</div>
+                <div class="key-hint" id="key-1">F</div>
+                <div class="key-hint" id="key-2">J</div>
+                <div class="key-hint" id="key-3">K</div>
+            </div>
+            
+            <!-- Всплывающий текст точности (300, 100, Miss) -->
+            <div id="hit-rating" class="hit-rating"></div>
+        </div>
+        <button id="start-game-btn" onclick="startManiaGame()">Start Game</button>
+    </div>
 
+    <!-- ПРАВАЯ ЧАСТЬ: ТВОЙ ПРОФИЛЬ -->
     <div class="profile-container">
         <div class="avatar-wrapper">
             <img src="https://i.imgur.com/qHBMFD6.gif" alt="Avatar" class="osu-avatar">
         </div>
-
         <h1 class="osu-username">rubinv</h1>
-        <p class="osu-status">200</p>
-
+        <p class="osu-status">Click the circles! 🌟</p>
         <div class="osu-links">
             <a href="https://github.com/itzrubinv" target="_blank" class="osu-btn github">
                 <span class="btn-icon">🐙</span> GitHub
@@ -26,5 +45,7 @@
         </div>
     </div>
 
-</body>
-</html>
+</div>
+
+<!-- Подключаем скрипт игры, который напишем ниже -->
+<script src="game.js"></script>
