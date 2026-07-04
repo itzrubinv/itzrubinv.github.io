@@ -248,3 +248,65 @@ body {
         opacity: 0;
     }
 }
+/* Настройки внешнего вида выбора сложности */
+.difficulty-selector {
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: #b9b5c4;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.difficulty-selector select {
+    background: #2e2a36; /* Темно-фиолетовый фон под стиль профиля */
+    border: 2px solid #ff66aa; /* Розовая фирменная рамка */
+    color: white;
+    padding: 6px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+/* Эффект легкого свечения при наведении на селектор */
+.difficulty-selector select:hover {
+    box-shadow: 0 0 10px rgba(255, 102, 170, 0.5);
+    background: #383344;
+}
+
+/* Стили для кнопок управления (Старт, Пауза, Сброс), чтобы они стояли красиво в ряд */
+.game-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.game-controls button {
+    margin-top: 0 !important; /* Убираем лишние отступы сверху */
+}
+
+#pause-game-btn {
+    background: #383344;
+    border: 2px solid #00ffcc;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+#pause-game-btn:hover { transform: scale(1.05); background: #00ffcc; color: #1c1a21; }
+
+#reset-game-btn {
+    background: #383344;
+    border: 2px solid #ff4444;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+#reset-game-btn:hover { transform: scale(1.05); background: #ff4444; color: white; }
