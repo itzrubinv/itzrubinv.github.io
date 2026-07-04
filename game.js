@@ -1,20 +1,37 @@
-console.log("Osu!mania script loaded successfully!");
+console.log("Osu!mania script loaded with difficulties!");
 
 let score = 0;
 let combo = 0;
 let gameInterval;
-let noteSpeed = 4; 
 let isPlaying = false;
+
+// Настройки сложностей
+let noteSpeed = 4;      // Скорость падения (чем выше, тем быстрее)
+let spawnRate = 600;    // Как часто спавнятся ноты (в миллисекундах)
 
 const keys = ['d', 'f', 'j', 'k'];
 let laneElements = [];
+const music = document.getElementById('game-music');
 
-// Функция старта
+function changeDifficulty() {
+    const diff = document.getElementById('diff').value;
+    if (diff === 'easy') {
+        noteSpeed = 3;
+        spawnRate = 800;
+    } else if (diff === 'normal') {
+        noteSpeed = 5;
+        spawnRate = 500;
+    } else if (diff === 'hard') {
+        noteSpeed = 7;
+        spawnRate = 350;
+    }
+    console.log(`Difficulty changed to ${diff}. Speed: ${noteSpeed}, Rate: ${spawnRate}`);
+}
+
 function startManiaGame() {
-    console.log("Start button clicked!");
     if (isPlaying) return;
     
-    // Переопределим элементы тут, чтобы они точно нашлись в DOM
+    // Инициализируем дорожки
     laneElements = [
         document.getElementById('lane-0'),
         document.getElementById('lane-1'),
@@ -28,11 +45,22 @@ function startManiaGame() {
     document.getElementById('score').innerText = '000000';
     document.getElementById('combo').innerText = '0';
     document.getElementById('start-game-btn').style.display = 'none';
+    document.getElementById('diff').disabled = true; // Блокируем выбор во время игры
 
+    // Принудительно выставим настройки сложности перед стартом
+    changeDifficulty();
+
+    // Запускаем музыку
+    if(music) {
+        music.currentTime = 0;
+        music.play().catch(e => console.log("Музыка не запустилась, нужен локальный mp3 файл:", e));
+    }
+
+    // Запускаем спавн нот
     gameInterval = setInterval(() => {
         let randomLane = Math.floor(Math.random() * 4);
         createNote(randomLane);
-    }, 600);
+    }, spawnRate);
 }
 
 function createNote(laneIndex) {
@@ -54,6 +82,7 @@ function createNote(laneIndex) {
         topPos += noteSpeed;
         note.style.top = topPos + 'px';
 
+        // Если пропустили ноту (Miss)
         if (topPos > 360) {
             clearInterval(noteInterval);
             note.remove();
@@ -79,6 +108,7 @@ window.addEventListener('keydown', (e) => {
             const targetNote = notesInLane[0];
             const noteTop = parseInt(targetNote.style.top);
 
+            // Меняй текст 'Perfect' и 'Good' на любые другие цифры или слова здесь:
             if (noteTop >= 310 && noteTop <= 355) {
                 score += 300;
                 combo++;
