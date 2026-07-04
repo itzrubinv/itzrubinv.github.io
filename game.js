@@ -1,16 +1,21 @@
-console.log("Osu!mania: Controls Edition Loaded!");
+console.log("Osu!mania: Sync & Results Edition Loaded!");
 
 let score = 0;
 let combo = 0;
+let maxCombo = 0;
 let gameInterval;
 let beatInterval;
 let isPlaying = false;
 let isPaused = false;
 
-// Настройки скоростей
+// Статистика для подсчета Accuracy
+let totalNotesSpawned = 0;
+let hitNotesCount = 0; 
+let perfectHits = 0; // Нажатия на 300
+
+// Настройки скоростей (привязаны к сетке BPM 120)
 let noteSpeed = 6;      
-let spawnRate = 450;    
-let beatRate = 500; 
+let currentDiff = 'normal';
 
 const keys = ['d', 'f', 'j', 'k'];
 let laneElements = [];
@@ -22,17 +27,11 @@ let activeHoldNotes = [null, null, null, null];
 let isKeyPressed = [false, false, false, false];
 
 function changeDifficulty() {
-    // Меняем настройки только если игра не запущена
     if (isPlaying && !isPaused) return; 
-    
-    const diff = document.getElementById('diff').value;
-    if (diff === 'easy') {
-        noteSpeed = 4; spawnRate = 650;
-    } else if (diff === 'normal') {
-        noteSpeed = 6; spawnRate = 450;
-    } else if (diff === 'hard') {
-        noteSpeed = 9; spawnRate = 280;
-    }
+    currentDiff = document.getElementById('diff').value;
+    if (currentDiff === 'easy') noteSpeed = 4;
+    if (currentDiff === 'normal') noteSpeed = 6;
+    if (currentDiff === 'hard') noteSpeed = 9;
 }
 
 function startManiaGame() {
@@ -49,9 +48,13 @@ function startManiaGame() {
     isPaused = false;
     score = 0;
     combo = 0;
-    updateUI();
+    maxCombo = 0;
+    totalNotesSpawned = 0;
+    hitNotesCount = 0;
+    perfectHits = 0;
     
-    // Управляем кнопками интерфейса
+    updateUI();
+    document.getElementById('result-screen').style.display = 'none';
     document.getElementById('start-game-btn').style.display = 'none';
     document.getElementById('pause-game-btn').style.display = 'inline-block';
     document.getElementById('reset-game-btn').style.display = 'inline-block';
@@ -61,35 +64,38 @@ function startManiaGame() {
 
     if(music) {
         music.currentTime = 0;
-        music.play().catch(e => console.log("Audio play deferred"));
+        music.play().catch(e => console.log("Audio play error"));
+        
+        // АВТОМАТИЧЕСКИЙ КОНЕЦ ИГРЫ ПРИ ЗАВЕРШЕНИИ ПЕСНИ
+        music.onended = () => {
+            endGameAndShowResults();
+        };
     }
 
-    // Пульсация интерфейса (Beat Sync)
+    // Синк пульсации: ровно 120 BPM (каждые 500мс)
     beatInterval = setInterval(() => {
-        if (isPaused) return; // Не пульсируем на паузе
-        if(board) {
-            board.classList.remove('pulse');
-            void board.offsetWidth;
-            board.classList.add('pulse');
-        }
-        if(avatar) {
-            avatar.classList.remove('pulse');
-            void avatar.offsetWidth;
-            avatar.classList.add('pulse');
-        }
-    }, beatRate);
+        if (isPaused) return;
+        [board, avatar].forEach(el => {
+            if(el) {
+                el.classList.remove('pulse');
+                void el.offsetWidth;
+                el.classList.add('pulse');
+            }
+        });
+    }, 500);
 
-    // Генератор нот
-    runSpawner();
-}
-
-function runSpawner() {
+    // Синк нот: генерируем паттерны строго по долям (250мс / 500мс)
+    let intervalTime = currentDiff === 'hard' ? 250 : 500;
     gameInterval = setInterval(() => {
         if (isPaused) return;
+        
+        // В ритм-играх ноты идут не случайно каждую миллисекунду, а группами
         let randomLane = Math.floor(Math.random() * 4);
-        let isHold = Math.random() > 0.75;
+        let isHold = Math.random() > 0.80; // 20% шанс длинной ноты
+        
         createNote(randomLane, isHold);
-    }, spawnRate);
+        totalNotesSpawned++;
+    }, intervalTime);
 }
 
 function createNote(laneIndex, isHold) {
@@ -115,8 +121,6 @@ function createNote(laneIndex, isHold) {
             note.remove();
             return;
         }
-
-        // Если игра на паузе — ноты просто застывают на месте
         if (isPaused) return;
 
         topPos += noteSpeed;
@@ -142,61 +146,9 @@ function createNote(laneIndex, isHold) {
     note.dataset.height = noteHeight;
 }
 
-// Поставить игру на ПАУЗУ
-function togglePauseGame() {
-    if (!isPlaying) return;
-
-    const pauseBtn = document.getElementById('pause-game-btn');
-
-    if (!isPaused) {
-        // Включаем паузу
-        isPaused = true;
-        pauseBtn.innerText = "Resume";
-        if (music) music.pause();
-        showRating('PAUSED', '#ffffff');
-    } else {
-        // Снимаем с паузы
-        isPaused = false;
-        pauseBtn.innerText = "Pause";
-        if (music) music.play().catch(e => {});
-    }
-}
-
-// ПОЛНЫЙ СБРОС ИГРЫ (Остановка)
-function resetManiaGame() {
-    isPlaying = false;
-    isPaused = false;
-    score = 0;
-    combo = 0;
-    activeHoldNotes = [null, null, null, null];
-    
-    // Останавливаем все глобальные таймеры спавна и пульсации
-    clearInterval(gameInterval);
-    clearInterval(beatInterval);
-
-    // Выключаем музыку
-    if (music) {
-        music.pause();
-        music.currentTime = 0;
-    }
-
-    // Удаляем абсолютно все оставшиеся ноты с поля визуально
-    const allNotes = document.querySelectorAll('.note');
-    allNotes.forEach(note => note.remove());
-
-    // Обновляем интерфейс кнопок в исходное состояние
-    document.getElementById('start-game-btn').style.display = 'inline-block';
-    document.getElementById('pause-game-btn').style.display = 'none';
-    document.getElementById('pause-game-btn').innerText = "Pause";
-    document.getElementById('reset-game-btn').style.display = 'none';
-    document.getElementById('diff').disabled = false; // Снова разрешаем менять сложность!
-    
-    updateUI();
-    showRating('RESET', '#ff66aa');
-}
-
+// Обработка кликов
 window.addEventListener('keydown', (e) => {
-    if (!isPlaying || isPaused) return; // На паузе кнопки не нажимаются
+    if (!isPlaying || isPaused) return;
     const keyIndex = keys.indexOf(e.key.toLowerCase());
     
     if (keyIndex !== -1 && !isKeyPressed[keyIndex]) {
@@ -210,11 +162,11 @@ window.addEventListener('keydown', (e) => {
             const noteTop = parseInt(targetNote.style.top);
             const isHold = targetNote.dataset.isHold === "true";
             const noteHeight = parseInt(targetNote.dataset.height);
-
             const hitHitbox = noteTop + noteHeight;
 
             if (hitHitbox >= 340 && hitHitbox <= 400) {
                 createHitEffect(keyIndex);
+                hitNotesCount++;
 
                 if (isHold) {
                     activeHoldNotes[keyIndex] = targetNote;
@@ -222,11 +174,13 @@ window.addEventListener('keydown', (e) => {
                     combo++;
                     showRating('HOLD!', '#00ffcc');
                 } else {
+                    perfectHits++;
                     score += 300;
                     combo++;
                     showRating('300', '#ffcc00');
                     destroyNote(targetNote);
                 }
+                if (combo > maxCombo) maxCombo = combo;
                 updateUI();
             }
         }
@@ -249,11 +203,101 @@ window.addEventListener('keyup', (e) => {
     }
 });
 
+// ФУНКЦИЯ ЗАВЕРШЕНИЯ УРОВНЯ
+function endGameAndShowResults() {
+    isPlaying = false;
+    clearInterval(gameInterval);
+    clearInterval(beatInterval);
+
+    // Считаем точность (Accuracy)
+    let accuracy = 0;
+    if (totalNotesSpawned > 0) {
+        // Формула веса точности osu
+        accuracy = Math.round(((perfectHits * 300 + (hitNotesCount - perfectHits) * 100) / (totalNotesSpawned * 300)) * 100);
+    }
+    if (accuracy > 100) accuracy = 100;
+    if (accuracy < 0) accuracy = 0;
+
+    // Высчитываем Ранг
+    let rank = 'D';
+    if (accuracy === 100) rank = 'SS';
+    else if (accuracy >= 95) rank = 'S';
+    else if (accuracy >= 85) rank = 'A';
+    else if (accuracy >= 70) rank = 'B';
+    else if (accuracy >= 50) rank = 'C';
+
+    // Подставляем данные на экран результатов
+    document.getElementById('res-score').innerText = String(score).padStart(6, '0');
+    document.getElementById('res-combo').innerText = maxCombo;
+    document.getElementById('res-acc').innerText = accuracy + '%';
+    
+    const rankEl = document.getElementById('res-rank');
+    rankEl.innerText = rank;
+    
+    // Красим ранг в нужный цвет
+    if (rank === 'SS' || rank === 'S') rankEl.style.color = '#ffcc00';
+    else if (rank === 'A') rankEl.style.color = '#00ffcc';
+    else if (rank === 'B' || rank === 'C') rankEl.style.color = '#ff66aa';
+    else rankEl.style.color = '#ff4444';
+
+    // Показываем окно результатов
+    document.getElementById('result-screen').style.display = 'flex';
+    
+    // Чистим ноты
+    document.querySelectorAll('.note').forEach(n => n.remove());
+}
+
+function closeResults() {
+    document.getElementById('result-screen').style.display = 'none';
+    resetManiaGame();
+}
+
+function togglePauseGame() {
+    if (!isPlaying) return;
+    const pauseBtn = document.getElementById('pause-game-btn');
+    if (!isPaused) {
+        isPaused = true;
+        pauseBtn.innerText = "Resume";
+        if (music) music.pause();
+        showRating('PAUSED', '#ffffff');
+    } else {
+        isPaused = false;
+        pauseBtn.innerText = "Pause";
+        if (music) music.play().catch(e => {});
+    }
+}
+
+function resetManiaGame() {
+    isPlaying = false;
+    isPaused = false;
+    score = 0;
+    combo = 0;
+    maxCombo = 0;
+    activeHoldNotes = [null, null, null, null];
+    
+    clearInterval(gameInterval);
+    clearInterval(beatInterval);
+
+    if (music) {
+        music.pause();
+        music.currentTime = 0;
+    }
+
+    document.querySelectorAll('.note').forEach(note => note.remove());
+    document.getElementById('result-screen').style.display = 'none';
+    document.getElementById('start-game-btn').style.display = 'inline-block';
+    document.getElementById('pause-game-btn').style.display = 'none';
+    document.getElementById('pause-game-btn').innerText = "Pause";
+    document.getElementById('reset-game-btn').style.display = 'none';
+    document.getElementById('diff').disabled = false;
+    
+    updateUI();
+}
+
 function createHitEffect(laneIndex) {
     if (!laneElements[laneIndex]) return;
     const effect = document.createElement('div');
-    effect.classList.add('hit-effect');
-    effect.classList.add(`lane-${laneIndex}`);
+    effect.classList.add('hit-effect', `lane-${laneIndex}`);
     laneElements[laneIndex].appendChild(effect);
     setTimeout(() => { effect.remove(); }, 200);
 }

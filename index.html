@@ -9,8 +9,7 @@
 </head>
 <div class="main-layout">
     
-    <!-- ЛЕВАЯ ЧАСТЬ: ИГРА OSU!MANIA -->
-    <div class="game-container">
+   <div class="game-container">
         <div class="game-info">
             <div class="score-box">Score: <span id="score">000000</span></div>
             <div class="combo-box">Combo: <span id="combo">0</span></div>
@@ -40,35 +39,23 @@
             </div>
             
             <div id="hit-rating" class="hit-rating"></div>
+
+            <!-- ОКНО РЕЗУЛЬТАТОВ (СКРЫТО ПО УМОЛЧАНИЮ) -->
+            <div id="result-screen" class="result-screen" style="display: none;">
+                <h2 class="result-title">RESULTS</h2>
+                <div class="result-rank" id="res-rank">A</div>
+                <div class="result-stats">
+                    <p>Score: <span id="res-score">000000</span></p>
+                    <p>Max Combo: <span id="res-combo">0</span></p>
+                    <p>Accuracy: <span id="res-acc">0%</span></p>
+                </div>
+                <button class="result-close-btn" onclick="closeResults()">Back</button>
+            </div>
         </div>
         
-       <div class="game-controls">
-    <button id="start-game-btn" onclick="startManiaGame()">Start Game</button>
-    <button id="pause-game-btn" onclick="togglePauseGame()" style="display: none;">Pause</button>
-    <button id="reset-game-btn" onclick="resetManiaGame()" style="display: none;">Reset</button>
-</div>
-    </div>
-
-    <!-- ПРАВАЯ ЧАСТЬ: ПРОФИЛЬ -->
-    <div class="profile-container">
-        <div class="avatar-wrapper">
-            <img src="https://i.imgur.com/qHBMFD6.gif" alt="Avatar" class="osu-avatar">
-        </div>
-        <h1 class="osu-username">itzrubinv</h1>
-        <p class="osu-status">Click the circles! 🌟</p>
-        <div class="osu-links">
-            <a href="https://github.com/itzrubinv" target="_blank" class="osu-btn github">
-                <span class="btn-icon">🐙</span> GitHub
-            </a>
-            <a href="https://t.me/rubinv" target="_blank" class="osu-btn telegram">
-                <span class="btn-icon">✈️</span> Telegram
-            </a>
+        <div class="game-controls">
+            <button id="start-game-btn" onclick="startManiaGame()">Start Game</button>
+            <button id="pause-game-btn" onclick="togglePauseGame()" style="display: none;">Pause</button>
+            <button id="reset-game-btn" onclick="resetManiaGame()" style="display: none;">Reset</button>
         </div>
     </div>
-
-</div>
-
-<!-- Аудио-плеер для трека KIRA - VOICE -->
-<audio id="game-music" src="voice.mp3" preload="auto"></audio>
-
-<script src="game.js"></script>
