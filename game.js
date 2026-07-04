@@ -1,4 +1,4 @@
-console.log("Osu!mania: Sync & Results Edition Loaded!");
+console.log("Osu!mania: Audio Spectrum Visualizer Edition Loaded!");
 
 let score = 0;
 let combo = 0;
@@ -8,12 +8,17 @@ let beatInterval;
 let isPlaying = false;
 let isPaused = false;
 
-// Статистика для подсчета Accuracy
+// Переменные для Web Audio API спектра
+let audioCtx;
+let analyser;
+let source;
+let canvas, canvasCtx;
+let animationFrameId;
+
 let totalNotesSpawned = 0;
 let hitNotesCount = 0; 
-let perfectHits = 0; // Нажатия на 300
+let perfectHits = 0; 
 
-// Настройки скоростей (привязаны к сетке BPM 120)
 let noteSpeed = 6;      
 let currentDiff = 'normal';
 
@@ -64,15 +69,17 @@ function startManiaGame() {
 
     if(music) {
         music.currentTime = 0;
-        music.play().catch(e => console.log("Audio play error"));
         
-        // АВТОМАТИЧЕСКИЙ КОНЕЦ ИГРЫ ПРИ ЗАВЕРШЕНИИ ПЕСНИ
+        // Инициализируем анализатор спектра при первом запуске звука
+        initVisualizer();
+
+        music.play().catch(e => console.log("Audio play deferred setup"));
+        
         music.onended = () => {
             endGameAndShowResults();
         };
     }
 
-    // Синк пульсации: ровно 120 BPM (каждые 500мс)
     beatInterval = setInterval(() => {
         if (isPaused) return;
         [board, avatar].forEach(el => {
@@ -84,18 +91,80 @@ function startManiaGame() {
         });
     }, 500);
 
-    // Синк нот: генерируем паттерны строго по долям (250мс / 500мс)
     let intervalTime = currentDiff === 'hard' ? 250 : 500;
     gameInterval = setInterval(() => {
         if (isPaused) return;
-        
-        // В ритм-играх ноты идут не случайно каждую миллисекунду, а группами
         let randomLane = Math.floor(Math.random() * 4);
-        let isHold = Math.random() > 0.80; // 20% шанс длинной ноты
-        
+        let isHold = Math.random() > 0.80;
         createNote(randomLane, isHold);
         totalNotesSpawned++;
     }, intervalTime);
+}
+
+// ИНИЦИАЛИЗАЦИЯ И ОТРИСОВКА ЭКВАЛАЙЗЕРА
+function initVisualizer() {
+    canvas = document.getElementById('visualizer-canvas');
+    if (!canvas) return;
+    canvasCtx = canvas.getContext('2d');
+
+    // Подгоняем внутреннее разрешение холста под его CSS размеры
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
+    // Создаем аудио контекст (только один раз за сессию)
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        // Подключаем HTML5 аудио-плеер к Web Audio API
+        source = audioCtx.createMediaElementSource(music);
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+    }
+
+    // Настройки сглаживания спектра
+    analyser.fftSize = 64; // Небольшое число, чтобы полосы были широкими под 4 дорожки
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    // Функция рендеринга кадров анимации спектра
+    function draw() {
+        if (!isPlaying) return;
+        
+        animationFrameId = requestAnimationFrame(draw);
+
+        if (isPaused) return; // Замораживаем спектр на паузе
+
+        analyser.getByteFrequencyData(dataArray);
+
+        // Очищаем экран на каждом кадре
+        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const barWidth = (canvas.width / bufferLength) * 1.4;
+        let barHeight;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+            barHeight = dataArray[i] * 1.2; // Множитель высоты прыжка
+
+            // Плавный градиент от розового (osu!) к фиолетовому сверху
+            let gradient = canvasCtx.createLinearGradient(0, canvas.height, 0, canvas.height - barHeight);
+            gradient.addColorStop(0, '#ff66aa');
+            gradient.addColorStop(1, '#b500ff');
+
+            canvasCtx.fillStyle = gradient;
+            
+            // Рисуем полоски, растущие СНИЗУ вверх
+            canvasCtx.fillRect(x, canvas.height - barHeight, barWidth - 3, barHeight);
+
+            x += barWidth;
+        }
+    }
+
+    // Запускаем цикл отрисовки спектра
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    draw();
 }
 
 function createNote(laneIndex, isHold) {
@@ -146,7 +215,6 @@ function createNote(laneIndex, isHold) {
     note.dataset.height = noteHeight;
 }
 
-// Обработка кликов
 window.addEventListener('keydown', (e) => {
     if (!isPlaying || isPaused) return;
     const keyIndex = keys.indexOf(e.key.toLowerCase());
@@ -203,22 +271,19 @@ window.addEventListener('keyup', (e) => {
     }
 });
 
-// ФУНКЦИЯ ЗАВЕРШЕНИЯ УРОВНЯ
 function endGameAndShowResults() {
     isPlaying = false;
     clearInterval(gameInterval);
     clearInterval(beatInterval);
+    cancelAnimationFrame(animationFrameId);
 
-    // Считаем точность (Accuracy)
     let accuracy = 0;
     if (totalNotesSpawned > 0) {
-        // Формула веса точности osu
         accuracy = Math.round(((perfectHits * 300 + (hitNotesCount - perfectHits) * 100) / (totalNotesSpawned * 300)) * 100);
     }
     if (accuracy > 100) accuracy = 100;
     if (accuracy < 0) accuracy = 0;
 
-    // Высчитываем Ранг
     let rank = 'D';
     if (accuracy === 100) rank = 'SS';
     else if (accuracy >= 95) rank = 'S';
@@ -226,7 +291,6 @@ function endGameAndShowResults() {
     else if (accuracy >= 70) rank = 'B';
     else if (accuracy >= 50) rank = 'C';
 
-    // Подставляем данные на экран результатов
     document.getElementById('res-score').innerText = String(score).padStart(6, '0');
     document.getElementById('res-combo').innerText = maxCombo;
     document.getElementById('res-acc').innerText = accuracy + '%';
@@ -234,16 +298,12 @@ function endGameAndShowResults() {
     const rankEl = document.getElementById('res-rank');
     rankEl.innerText = rank;
     
-    // Красим ранг в нужный цвет
     if (rank === 'SS' || rank === 'S') rankEl.style.color = '#ffcc00';
     else if (rank === 'A') rankEl.style.color = '#00ffcc';
     else if (rank === 'B' || rank === 'C') rankEl.style.color = '#ff66aa';
     else rankEl.style.color = '#ff4444';
 
-    // Показываем окно результатов
     document.getElementById('result-screen').style.display = 'flex';
-    
-    // Чистим ноты
     document.querySelectorAll('.note').forEach(n => n.remove());
 }
 
@@ -277,10 +337,15 @@ function resetManiaGame() {
     
     clearInterval(gameInterval);
     clearInterval(beatInterval);
+    cancelAnimationFrame(animationFrameId);
 
     if (music) {
         music.pause();
         music.currentTime = 0;
+    }
+
+    if (canvasCtx) {
+        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     document.querySelectorAll('.note').forEach(note => note.remove());

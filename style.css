@@ -420,3 +420,14 @@ body {
         gap: 20px;
     }
 }
+/* --- АУДИО ВИЗУАЛИЗАТОР (СПЕКТР) --- */
+.visualizer-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Под нотами и хит-зоной */
+    pointer-events: none;
+    opacity: 0.45; /* Слегка приглушаем, чтобы не слепило глаза */
+}
