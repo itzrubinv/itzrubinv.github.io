@@ -53,7 +53,6 @@ function updateVolumeSettings() {
     if (masterSlider) {
         masterVolume = masterSlider.value / 100;
         document.getElementById('val-volume-master').innerText = masterSlider.value + '%';
-        // Сразу динамически меняем громкость играющей музыки
         if (music) music.volume = masterVolume;
     }
     
@@ -73,7 +72,7 @@ function playSound(soundId) {
     const sound = document.getElementById(soundId);
     if (sound) {
         sound.currentTime = 0;
-        sound.volume = effectsVolume; // Устанавливаем громкость эффектов
+        sound.volume = effectsVolume;
         sound.play().catch(e => console.log("Sound play prevented by browser policy"));
     }
 }
@@ -116,7 +115,7 @@ function startManiaGame() {
 
     if(music) {
         music.currentTime = 0;
-        music.volume = masterVolume; // Установка громкости музыки перед стартом
+        music.volume = masterVolume;
         initVisualizer();
         music.play().catch(e => console.log("Audio play deferred setup"));
         
@@ -182,7 +181,6 @@ function initVisualizer() {
         for (let i = 0; i < bufferLength; i++) {
             barHeight = dataArray[i] * 1.2; 
 
-            // Глубокий тёмно-фиолетовый переходящий в приглушённый бордово-розовый
             let gradient = canvasCtx.createLinearGradient(0, canvas.height, 0, canvas.height - barHeight);
             gradient.addColorStop(0, '#4a152d'); 
             gradient.addColorStop(1, '#23003b'); 
@@ -205,7 +203,7 @@ function createNote(laneIndex, isHold) {
     const note = document.createElement('div');
     note.classList.add('note');
     
-    let noteHeight = 30; // Увеличенная базовая высота ноты
+    let noteHeight = 30; 
     if (isHold) {
         note.classList.add('hold-note');
         noteHeight = 70;
@@ -237,7 +235,7 @@ function createNote(laneIndex, isHold) {
             if (activeHoldNotes[laneIndex] === note) activeHoldNotes[laneIndex] = null;
             note.remove();
             showRating('MISS', '#ff4444');
-            playSound('miss-sound'); // Звук промаха
+            playSound('miss-sound');
             combo = 0;
             updateUI();
         }
@@ -261,7 +259,6 @@ window.addEventListener('keydown', (e) => {
         if (notesInLane.length > 0) {
             const targetNote = notesInLane[0];
             
-            // Игнорируем ноты, находящиеся в процессе анимации исчезновения
             if (targetNote.classList.contains('fade-out-hold')) return;
 
             const noteTop = parseInt(targetNote.style.top);
@@ -269,7 +266,6 @@ window.addEventListener('keydown', (e) => {
             const noteHeight = parseInt(targetNote.dataset.height);
             const hitHitbox = noteTop + noteHeight;
 
-            // Расчет с учетом Audio Offset (1 пиксель ≈ 20мс задержки)
             let adjustedHitbox = hitHitbox + (audioOffset / 20);
 
             if (adjustedHitbox >= 340 && adjustedHitbox <= 400) {
@@ -281,13 +277,13 @@ window.addEventListener('keydown', (e) => {
                     score += 100;
                     combo++;
                     showRating('HOLD!', '#00ffcc');
-                    playSound('hit-sound'); // Звук старта зажатия
+                    playSound('hit-sound');
                 } else {
                     perfectHits++;
                     score += 300;
                     combo++;
                     showRating('300', '#ffcc00');
-                    playSound('hit-sound'); // Звук обычного попадания
+                    playSound('hit-sound');
                     destroyNote(targetNote);
                 }
                 if (combo > maxCombo) maxCombo = combo;
@@ -308,11 +304,10 @@ window.addEventListener('keyup', (e) => {
             const note = activeHoldNotes[keyIndex];
             activeHoldNotes[keyIndex] = null;
             
-            // Останавливаем таймер падения слайда и отправляем в красивое растворение
             clearInterval(note.dataset.intervalId);
             note.classList.add('fade-out-hold');
             createHitEffect(keyIndex); 
-            playSound('hit-sound');   // Звук успешного отпускания слайда
+            playSound('hit-sound');   
             
             setTimeout(() => {
                 note.remove();
@@ -401,7 +396,6 @@ function resetManiaGame() {
         canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    // Сброс фоновых вспышек комбо
     const flashOverlay = document.getElementById('combo-flash-overlay');
     if (flashOverlay) flashOverlay.className = 'combo-flash-overlay';
 
@@ -434,7 +428,6 @@ function updateUI() {
     document.getElementById('score').innerText = String(score).padStart(6, '0');
     document.getElementById('combo').innerText = combo;
 
-    // ОБРАБОТКА ТРИГГЕРОВ КОМБО ДЛЯ МАСШТАБНЫХ ВСПЫШЕК НА ФОНЕ
     const flashOverlay = document.getElementById('combo-flash-overlay');
     if (flashOverlay) {
         flashOverlay.className = 'combo-flash-overlay';

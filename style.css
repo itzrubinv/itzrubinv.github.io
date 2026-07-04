@@ -133,7 +133,7 @@ body {
 .note {
     position: absolute;
     width: 100%;
-    height: 30px; /* Было 15px */
+    height: 30px;
     background: #00ffff;
     box-shadow: 0 0 12px #00ffff;
     left: 0;
@@ -387,7 +387,7 @@ body {
     height: 100%;
     z-index: 1;
     pointer-events: none;
-    opacity: 0.15; /* Убран в глубокую прозрачность */
+    opacity: 0.15;
 }
 
 /* --- ЭФФЕКТЫ ОСНОВНОГО ФОНА САЙТА --- */
@@ -502,55 +502,53 @@ body {
     to { opacity: 1; transform: scale(1); }
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
-    .main-layout {
-        flex-direction: column-reverse;
-        align-items: center;
-        gap: 20px;
-    }
-}
-/* --- КНОПКА И ОКОШКО НАСТРОЕК --- */
-.game-container {
-    position: relative; /* Чтобы кнопка позиционировалась относительно контейнера */
-}
-
+/* --- КНОПКА И ОКОШКО НАСТРОЕК (ФИКСИРОВАННЫЕ НА СТРАНИЦЕ) --- */
 .settings-toggle-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: transparent;
-    border: none;
-    font-size: 1.3rem;
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    background: rgba(46, 42, 54, 0.6);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 102, 170, 0.3);
+    padding: 10px;
+    border-radius: 50%;
+    font-size: 1.4rem;
     cursor: pointer;
     color: #b9b5c4;
-    transition: transform 0.2s, color 0.2s;
-    z-index: 10;
+    transition: transform 0.2s, color 0.2s, background 0.2s;
+    z-index: 1000;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .settings-toggle-btn:hover {
     color: #ff66aa;
-    transform: rotate(45deg) scale(1.1);
+    background: rgba(46, 42, 54, 0.9);
+    transform: rotate(45deg) scale(1.05);
+    box-shadow: 0 0 12px rgba(255, 102, 170, 0.4);
 }
 
-/* Выезжающая панель настроек */
 .settings-sidebar {
-    position: absolute;
+    position: fixed;
     top: 0;
-    right: -100%; /* По умолчанию скрыта справа */
-    width: 100%;
-    height: 100%;
-    background: rgba(28, 26, 33, 0.98);
-    border-radius: 24px;
-    z-index: 200;
-    padding: 20px;
+    right: -320px;
+    width: 300px;
+    height: 100vh;
+    background: rgba(20, 18, 24, 0.95);
+    backdrop-filter: blur(15px);
+    border-left: 2px solid rgba(255, 102, 170, 0.3);
+    z-index: 2000;
+    padding: 30px 20px;
     box-sizing: border-box;
     transition: right 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.7);
     display: flex;
     flex-direction: column;
 }
 
-/* Класс, который мы будем вешать через JS для открытия */
 .settings-sidebar.open {
     right: 0;
 }
@@ -560,14 +558,14 @@ body {
     justify-content: space-between;
     align-items: center;
     border-bottom: 2px solid #2e2a36;
-    padding-bottom: 10px;
-    margin-bottom: 25px;
+    padding-bottom: 15px;
+    margin-bottom: 30px;
 }
 
 .settings-header h3 {
     margin: 0;
     color: #ff66aa;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     letter-spacing: 1px;
 }
 
@@ -575,7 +573,7 @@ body {
     background: transparent;
     border: none;
     color: #b9b5c4;
-    font-size: 1.8rem;
+    font-size: 2rem;
     cursor: pointer;
     line-height: 1;
 }
@@ -584,7 +582,6 @@ body {
     color: #ff4444;
 }
 
-/* Элементы настроек */
 .setting-item {
     margin-bottom: 20px;
     display: flex;
@@ -606,7 +603,6 @@ body {
     font-family: monospace;
 }
 
-/* Кастомные ползунки input[type="range"] */
 .setting-item input[type="range"] {
     -webkit-appearance: none;
     width: 100%;
@@ -635,4 +631,13 @@ body {
     font-size: 0.75rem;
     color: #787285;
     margin-top: 4px;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .main-layout {
+        flex-direction: column-reverse;
+        align-items: center;
+        gap: 20px;
+    }
 }
