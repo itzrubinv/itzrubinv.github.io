@@ -376,6 +376,24 @@ function destroyNote(note) {
 function updateUI() {
     document.getElementById('score').innerText = String(score).padStart(6, '0');
     document.getElementById('combo').innerText = combo;
+
+    // ПРОВЕРКА ТРИГГЕРОВ КОМБО ДЛЯ ЭФФЕКТОВ НА ФОНЕ
+    const flashOverlay = document.getElementById('combo-flash-overlay');
+    if (flashOverlay) {
+        // Очищаем старые классы вспышек перед проверкой
+        flashOverlay.className = 'combo-flash-overlay';
+
+        if (combo === 10) {
+            void flashOverlay.offsetWidth; // Сброс анимации (рефлоу)
+            flashOverlay.classList.add('flash-combo-10');
+        } else if (combo === 50) {
+            void flashOverlay.offsetWidth;
+            flashOverlay.classList.add('flash-combo-50');
+        } else if (combo === 100 || combo === 200 || combo === 300) {
+            void flashOverlay.offsetWidth;
+            flashOverlay.classList.add('flash-combo-100');
+        }
+    }
 }
 
 function showRating(text, color) {
