@@ -4,33 +4,49 @@ body {
     color: #ffffff;
     font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
-    padding: 0;
+    padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    box-sizing: border-box;
 }
 
-/* Сетка: Двухколоночный макет */
+/* Сетка: Двухколоночный макет на табличной верстке для идеального выравнивания */
 .main-layout {
-    display: flex;
-    gap: 40px;
+    display: table;
+    margin: 0 auto;
+    border-collapse: separate;
+    border-spacing: 40px 0; /* Отступ между игровым полем и профилем */
     max-width: 950px;
-    width: 95%;
-    align-items: flex-start;
-    justify-content: center;
+    width: 100%;
 }
 
-/* --- СТИЛИ ПРОФИЛЯ (СПРАВА) --- */
+/* Игровой контейнер как левая колонка */
+.game-container {
+    display: table-cell;
+    vertical-align: top;
+    background: #1c1a21;
+    border-radius: 24px;
+    padding: 20px;
+    width: 280px; /* Фиксируем ширину под игровое поле */
+    border: 2px solid #2e2a36;
+    box-sizing: border-box;
+}
+
+/* Контейнер профиля как правая колонка */
 .profile-container {
+    display: table-cell;
+    vertical-align: top;
     background: rgba(38, 35, 45, 0.85);
     backdrop-filter: blur(10px);
     border: 2px solid rgba(255, 102, 170, 0.2);
     border-radius: 24px;
-    padding: 40px;
+    padding: 30px;
     width: 320px;
     text-align: center;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
 }
 
 .avatar-wrapper {
