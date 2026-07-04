@@ -310,3 +310,66 @@ body {
     transition: 0.2s;
 }
 #reset-game-btn:hover { transform: scale(1.05); background: #ff4444; color: white; }
+/* --- КНОПКИ УПРАВЛЕНИЯ ИГРОЙ (СТАРТ, ПАУЗА, СБРОС) --- */
+
+/* Контейнер, который выстраивает кнопки в один красивый ряд */
+.game-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Общие правила для ВСЕХ трех кнопок управления */
+#start-game-btn, 
+#pause-game-btn, 
+#reset-game-btn {
+    margin-top: 0 !important;
+    padding: 10px 22px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    outline: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Индивидуальный стиль для кнопки START (Розовая неоновая) */
+#start-game-btn {
+    background: #ff66aa;
+    border: 2px solid #ff66aa;
+    color: white;
+}
+#start-game-btn:hover {
+    transform: scale(1.05);
+    background: #ff4499;
+    box-shadow: 0 0 15px rgba(255, 102, 170, 0.6);
+}
+
+/* Индивидуальный стиль для кнопки PAUSE (Бирюзовая) */
+#pause-game-btn {
+    background: #1c1a21;
+    border: 2px solid #00ffcc;
+    color: #00ffcc;
+}
+#pause-game-btn:hover {
+    transform: scale(1.05);
+    background: #00ffcc;
+    color: #1c1a21;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.6);
+}
+
+/* Индивидуальный стиль для кнопки RESET (Красная) */
+#reset-game-btn {
+    background: #1c1a21;
+    border: 2px solid #ff4444;
+    color: #ff4444;
+}
+#reset-game-btn:hover {
+    transform: scale(1.05);
+    background: #ff4444;
+    color: white;
+    box-shadow: 0 0 15px rgba(255, 68, 68, 0.6);
+}
