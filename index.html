@@ -42,7 +42,11 @@
             <div id="hit-rating" class="hit-rating"></div>
         </div>
         
-        <button id="start-game-btn" onclick="startManiaGame()">Start Game</button>
+       <div class="game-controls">
+    <button id="start-game-btn" onclick="startManiaGame()">Start Game</button>
+    <button id="pause-game-btn" onclick="togglePauseGame()" style="display: none;">Pause</button>
+    <button id="reset-game-btn" onclick="resetManiaGame()" style="display: none;">Reset</button>
+</div>
     </div>
 
     <!-- ПРАВАЯ ЧАСТЬ: ПРОФИЛЬ -->
@@ -56,7 +60,7 @@
             <a href="https://github.com/itzrubinv" target="_blank" class="osu-btn github">
                 <span class="btn-icon">🐙</span> GitHub
             </a>
-            <a href="https://t.me/твой_ник" target="_blank" class="osu-btn telegram">
+            <a href="https://t.me/rubinv" target="_blank" class="osu-btn telegram">
                 <span class="btn-icon">✈️</span> Telegram
             </a>
         </div>
