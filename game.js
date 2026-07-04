@@ -8,7 +8,6 @@ let beatInterval;
 let isPlaying = false;
 let isPaused = false;
 
-// Переменные для Web Audio API спектра
 let audioCtx;
 let analyser;
 let source;
@@ -22,7 +21,6 @@ let perfectHits = 0;
 let noteSpeed = 6;      
 let currentDiff = 'normal';
 
-// Использование e.code вместо e.key решает проблему с любыми раскладками клавиатуры
 const keyCodes = ['KeyD', 'KeyF', 'KeyJ', 'KeyK'];
 let laneElements = [];
 const music = document.getElementById('game-music');
@@ -32,20 +30,52 @@ const avatar = document.querySelector('.osu-avatar');
 let activeHoldNotes = [null, null, null, null];
 let isKeyPressed = [false, false, false, false];
 
-// НАСТРОЙКИ ЗВУКА И ТАЙМИНГОВ
 let masterVolume = 1.0;
 let effectsVolume = 1.0;
 let audioOffset = 0; 
 
-// Переключение видимости панели настроек
+// Привязка событий после загрузки документа
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('settings-toggle-btn').addEventListener('click', toggleSettings);
+    document.getElementById('settings-close-x').addEventListener('click', toggleSettings);
+    
+    document.getElementById('volume-master').addEventListener('input', updateVolumeSettings);
+    document.getElementById('volume-effects').addEventListener('input', updateVolumeSettings);
+    document.getElementById('audio-offset').addEventListener('input', updateVolumeSettings);
+    
+    document.getElementById('diff').addEventListener('change', changeDifficulty);
+    document.getElementById('start-game-btn').addEventListener('click', startManiaGame);
+    document.getElementById('pause-game-btn').addEventListener('click', togglePauseGame);
+    document.getElementById('reset-game-btn').addEventListener('click', resetManiaGame);
+    document.getElementById('result-close-btn').addEventListener('click', closeResults);
+
+    // Инициализация тач-событий для мобилок
+    document.querySelectorAll('.key-hint').forEach(button => {
+        const laneIndex = parseInt(button.getAttribute('data-lane'));
+
+        button.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (!isPlaying || isPaused) return;
+            triggerLanePress(laneIndex);
+        }, { passive: false });
+
+        button.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            triggerLaneRelease(laneIndex);
+        }, { passive: false });
+        
+        button.addEventListener('touchcancel', (e) => {
+            e.preventDefault();
+            triggerLaneRelease(laneIndex);
+        }, { passive: false });
+    });
+});
+
 function toggleSettings() {
     const sidebar = document.getElementById('settings-sidebar');
-    if (sidebar) {
-        sidebar.classList.toggle('open');
-    }
+    if (sidebar) sidebar.classList.toggle('open');
 }
 
-// Обновление значений громкости и офсета
 function updateVolumeSettings() {
     const masterSlider = document.getElementById('volume-master');
     const effectsSlider = document.getElementById('volume-effects');
@@ -68,13 +98,12 @@ function updateVolumeSettings() {
     }
 }
 
-// Воспроизведение звуков
 function playSound(soundId) {
     const sound = document.getElementById(soundId);
     if (sound) {
         sound.currentTime = 0;
         sound.volume = effectsVolume;
-        sound.play().catch(e => console.log("Sound play prevented by browser policy"));
+        sound.play().catch(e => {});
     }
 }
 
@@ -118,11 +147,8 @@ function startManiaGame() {
         music.currentTime = 0;
         music.volume = masterVolume;
         initVisualizer();
-        music.play().catch(e => console.log("Audio play deferred setup"));
-        
-        music.onended = () => {
-            endGameAndShowResults();
-        };
+        music.play().catch(e => {});
+        music.onended = () => { endGameAndShowResults(); };
     }
 
     beatInterval = setInterval(() => {
@@ -146,12 +172,10 @@ function startManiaGame() {
     }, intervalTime);
 }
 
-// ИНИЦИАЛИЗАЦИЯ И ОТРИСОВКА ЭКВАЛАЙЗЕРА
 function initVisualizer() {
     canvas = document.getElementById('visualizer-canvas');
     if (!canvas) return;
     canvasCtx = canvas.getContext('2d');
-
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
 
@@ -181,26 +205,20 @@ function initVisualizer() {
 
         for (let i = 0; i < bufferLength; i++) {
             barHeight = dataArray[i] * 1.2; 
-
             let gradient = canvasCtx.createLinearGradient(0, canvas.height, 0, canvas.height - barHeight);
             gradient.addColorStop(0, '#4a152d'); 
             gradient.addColorStop(1, '#23003b'); 
-
             canvasCtx.fillStyle = gradient;
             canvasCtx.fillRect(x, canvas.height - barHeight, barWidth - 3, barHeight);
             x += barWidth;
         }
     }
-
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
     draw();
 }
 
 function createNote(laneIndex, isHold) {
     if (!laneElements[laneIndex]) return;
-    
     const note = document.createElement('div');
     note.classList.add('note');
     
@@ -247,7 +265,6 @@ function createNote(laneIndex, isHold) {
     note.dataset.height = noteHeight;
 }
 
-// Единая логика для обработки нажатия (клавиатура или тач)
 function triggerLanePress(keyIndex) {
     if (keyIndex === -1 || isKeyPressed[keyIndex]) return;
     isKeyPressed[keyIndex] = true;
@@ -258,7 +275,6 @@ function triggerLanePress(keyIndex) {
     const notesInLane = laneElements[keyIndex] ? laneElements[keyIndex].getElementsByClassName('note') : [];
     if (notesInLane.length > 0) {
         const targetNote = notesInLane[0];
-        
         if (targetNote.classList.contains('fade-out-hold')) return;
 
         const noteTop = parseInt(targetNote.style.top);
@@ -268,7 +284,6 @@ function triggerLanePress(keyIndex) {
 
         let adjustedHitbox = hitHitbox + (audioOffset / 20);
 
-        // Хитбокс немного расширен для удобства тач-ввода (330-410 вместо 340-400)
         if (adjustedHitbox >= 330 && adjustedHitbox <= 410) {
             createHitEffect(keyIndex);
             hitNotesCount++;
@@ -293,7 +308,6 @@ function triggerLanePress(keyIndex) {
     }
 }
 
-// Единая логика для обработки отпускания (клавиатура или тач)
 function triggerLaneRelease(keyIndex) {
     if (keyIndex === -1) return;
     isKeyPressed[keyIndex] = false;
@@ -309,49 +323,22 @@ function triggerLaneRelease(keyIndex) {
         note.classList.add('fade-out-hold');
         createHitEffect(keyIndex); 
         playSound('hit-sound');   
-        
-        setTimeout(() => {
-            note.remove();
-        }, 250);
+        setTimeout(() => { note.remove(); }, 250);
         
         showRating('RELEASE!', '#b500ff');
         updateUI();
     }
 }
 
-// --- СЛУШАТЕЛИ КЛАВИАТУРЫ ---
 window.addEventListener('keydown', (e) => {
     if (!isPlaying || isPaused) return;
-    const keyIndex = keyCodes.indexOf(e.code); // Проверка физического кода клавиши
+    const keyIndex = keyCodes.indexOf(e.code);
     triggerLanePress(keyIndex);
 });
 
 window.addEventListener('keyup', (e) => {
     const keyIndex = keyCodes.indexOf(e.code);
     triggerLaneRelease(keyIndex);
-});
-
-// --- СЛУШАТЕЛИ ТАЧ-ИНТЕРФЕЙСА (МОБИЛКИ) ---
-document.querySelectorAll('.key-hint').forEach(button => {
-    const laneIndex = parseInt(button.getAttribute('data-lane'));
-
-    // Обработка касания экрана пальцем
-    button.addEventListener('touchstart', (e) => {
-        e.preventDefault(); // Предотвращаем симуляцию клика мышкой и зум
-        if (!isPlaying || isPaused) return;
-        triggerLanePress(laneIndex);
-    }, { passive: false });
-
-    // Обработка отпускания пальца
-    button.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        triggerLaneRelease(laneIndex);
-    }, { passive: false });
-    
-    button.addEventListener('touchcancel', (e) => {
-        e.preventDefault();
-        triggerLaneRelease(laneIndex);
-    }, { passive: false });
 });
 
 function endGameAndShowResults() {
@@ -427,10 +414,7 @@ function resetManiaGame() {
         music.pause();
         music.currentTime = 0;
     }
-
-    if (canvasCtx) {
-        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-    }
+    if (canvasCtx) canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
 
     const flashOverlay = document.getElementById('combo-flash-overlay');
     if (flashOverlay) flashOverlay.className = 'combo-flash-overlay';
@@ -468,7 +452,6 @@ function updateUI() {
     const flashOverlay = document.getElementById('combo-flash-overlay');
     if (flashOverlay) {
         flashOverlay.className = 'combo-flash-overlay';
-
         if (combo === 10) {
             void flashOverlay.offsetWidth; 
             flashOverlay.classList.add('flash-combo-10');

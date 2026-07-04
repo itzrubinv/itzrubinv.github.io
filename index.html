@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>rubinv</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 
@@ -13,28 +13,28 @@
         <div class="fog-layer"></div>
     </div>
 
-    <button id="settings-toggle-btn" class="settings-toggle-btn" onclick="toggleSettings()">⚙️</button>
+    <button id="settings-toggle-btn" class="settings-toggle-btn">⚙️</button>
 
     <div id="settings-sidebar" class="settings-sidebar">
         <div class="settings-header">
             <h3>Settings</h3>
-            <button class="settings-close-x" onclick="toggleSettings()">×</button>
+            <button id="settings-close-x" class="settings-close-x">×</button>
         </div>
         <div class="settings-body">
             <div class="setting-item">
                 <label for="volume-master">Music Volume: <span id="val-volume-master">100%</span></label>
-                <input type="range" id="volume-master" min="0" max="100" value="100" oninput="updateVolumeSettings()">
+                <input type="range" id="volume-master" min="0" max="100" value="100">
             </div>
             
             <div class="setting-item">
                 <label for="volume-effects">Effects Volume: <span id="val-volume-effects">100%</span></label>
-                <input type="range" id="volume-effects" min="0" max="100" value="100" oninput="updateVolumeSettings()">
+                <input type="range" id="volume-effects" min="0" max="100" value="100">
             </div>
 
             <div class="setting-item">
                 <label for="audio-offset">Audio Offset: <span id="val-audio-offset">0 ms</span></label>
                 <div class="offset-control">
-                    <input type="range" id="audio-offset" min="-200" max="200" value="0" step="5" oninput="updateVolumeSettings()">
+                    <input type="range" id="audio-offset" min="-200" max="200" value="0" step="5">
                 </div>
                 <small class="setting-hint">Сдвиг нот, если звук отстает</small>
             </div>
@@ -51,7 +51,7 @@
             
             <div class="difficulty-selector">
                 <label for="diff">Difficulty: </label>
-                <select id="diff" onchange="changeDifficulty()">
+                <select id="diff">
                     <option value="easy">Easy</option>
                     <option value="normal" selected>Normal</option>
                     <option value="hard">Hard</option>
@@ -83,14 +83,14 @@
                         <p>Max Combo: <span id="res-combo">0</span></p>
                         <p>Accuracy: <span id="res-acc">0%</span></p>
                     </div>
-                    <button class="result-close-btn" onclick="closeResults()">Back</button>
+                    <button id="result-close-btn" class="result-close-btn">Back</button>
                 </div>
             </div>
             
             <div class="game-controls">
-                <button id="start-game-btn" onclick="startManiaGame()">Start Game</button>
-                <button id="pause-game-btn" onclick="togglePauseGame()" style="display: none;">Pause</button>
-                <button id="reset-game-btn" onclick="resetManiaGame()" style="display: none;">Reset</button>
+                <button id="start-game-btn">Start Game</button>
+                <button id="pause-game-btn" style="display: none;">Pause</button>
+                <button id="reset-game-btn" style="display: none;">Reset</button>
             </div>
         </div>
 
@@ -116,6 +116,6 @@
     <audio id="hit-sound" src="hit.mp3" preload="auto"></audio>
     <audio id="miss-sound" src="miss.mp3" preload="auto"></audio>
 
-    <script src="game.js"></script>
+    <script src="game.js?v=3"></script>
 </body>
 </html>
