@@ -184,3 +184,37 @@ body {
     font-weight: bold;
     outline: none;
 }
+/* Добавляем класс пульсации для всего борда */
+.mania-board.pulse {
+    animation: boardPulse 0.2s ease-in-out;
+}
+
+/* Пульсация аватарки в такт */
+.osu-avatar.pulse {
+    animation: avatarPulse 0.2s ease-in-out;
+}
+
+@keyframes boardPulse {
+    0% { transform: scale(1); border-color: #ff66aa; }
+    50% { transform: scale(1.02); border-color: #ffffff; box-shadow: 0 0 20px rgba(255, 102, 170, 0.6); }
+    100% { transform: scale(1); border-color: #383344; }
+}
+
+@keyframes avatarPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); box-shadow: 0 0 35px #ff66aa; }
+    100% { transform: scale(1); }
+}
+
+/* Стили для длинных нот (Hold Notes) */
+.note.hold-note {
+    background: linear-gradient(to top, #00ffff, #0088ff);
+    border-radius: 4px;
+    box-shadow: 0 0 15px #00ffff;
+}
+
+/* Внутренние дорожки для холдов сделаем розово-фиолетовыми */
+#lane-1 .note.hold-note, #lane-2 .note.hold-note {
+    background: linear-gradient(to top, #ff66aa, #b500ff);
+    box-shadow: 0 0 15px #ff66aa;
+}
