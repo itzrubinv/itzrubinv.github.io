@@ -168,3 +168,19 @@ body {
 @media (max-width: 768px) {
     .main-layout { flex-direction: column-reverse; align-items: center; }
 }
+.difficulty-selector {
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: #b9b5c4;
+}
+
+.difficulty-selector select {
+    background: #2e2a36;
+    border: 2px solid #ff66aa;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    outline: none;
+}
