@@ -86,7 +86,7 @@ window.addEventListener('keydown', (e) => {
                 // Чуть раньше/позже (100)
                 score += 52;
                 combo++;
-                showRating('100', '#00ffcc');
+                showRating('200', '#00ffcc');
                 destroyNote(targetNote);
             }
         }
