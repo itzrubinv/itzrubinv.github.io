@@ -1,6 +1,5 @@
-/* Общие настройки экрана */
 body {
-    background-color: #18161c; /* Глубокий темный фон с фиолетовым оттенком */
+    background-color: #121014;
     color: #ffffff;
     font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
@@ -9,121 +8,163 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    overflow: hidden;
-    
-    /* Плавное проявление страницы */
-    animation: fadeInPage 1.2s ease-in-out forwards;
-    opacity: 0;
 }
 
-/* Главный контейнер профиля */
+/* Сетка: Делим экран на две колонки */
+.main-layout {
+    display: flex;
+    gap: 40px;
+    max-width: 950px;
+    width: 95%;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+/* --- СТИЛИ ПРОФИЛЯ (СПРАВА) --- */
 .profile-container {
-    background: rgba(38, 35, 45, 0.7); /* Полупрозрачный темный блок */
-    backdrop-filter: blur(10px); /* Эффект размытия стекла */
+    background: rgba(38, 35, 45, 0.85);
+    backdrop-filter: blur(10px);
     border: 2px solid rgba(255, 102, 170, 0.2);
     border-radius: 24px;
     padding: 40px;
-    width: 90%;
-    max-width: 400px;
+    width: 320px;
     text-align: center;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 102, 170, 0.1);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
-/* Круглая аватарка с неоновым свечением */
-.avatar-wrapper {
-    position: relative;
-    width: 150px;
-    height: 150px;
-    margin: 0 auto 20px auto;
-}
-
+.avatar-wrapper { width: 130px; height: 130px; margin: 0 auto 20px; }
 .osu-avatar {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid #ff66aa; /* Розовый бренд-цвет Osu! */
-    box-shadow: 0 0 20px #ff66aa, inset 0 0 20px #ff66aa;
-    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+    border: 4px solid #ff66aa; box-shadow: 0 0 20px #ff66aa;
+    transition: transform 0.3s;
+}
+.osu-avatar:hover { transform: scale(1.05); }
+.osu-username { font-size: 2rem; margin: 10px 0 5px; font-weight: 800; }
+.osu-status { color: #b9b5c4; font-size: 0.9rem; margin-bottom: 25px; }
+.osu-links { display: flex; flex-direction: column; gap: 12px; }
+.osu-btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    color: white; text-decoration: none; padding: 12px; font-weight: 600;
+    background: #2e2a36; border-left: 6px solid #ff66aa; border-radius: 8px;
+    transition: all 0.2s ease;
+}
+.osu-btn:hover {
+    background: #ff66aa; transform: translateX(6px);
+    box-shadow: 0 0 15px rgba(255, 102, 170, 0.6);
 }
 
-/* Эффект при наведении на аватарку (слегка крутится и увеличивается) */
-.osu-avatar:hover {
-    transform: scale(1.08) rotate(5deg);
-    box-shadow: 0 0 30px #ff66aa;
-}
-
-/* Ник и текст */
-.osu-username {
-    font-size: 2.2rem;
-    margin: 10px 0 5px 0;
-    font-weight: 800;
-    letter-spacing: 1px;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-.osu-status {
-    color: #b9b5c4;
-    font-size: 1rem;
-    margin-bottom: 30px;
-    font-style: italic;
-}
-
-/* Контейнер для кнопок */
-.osu-links {
+/* --- СТИЛИ ИГРЫ OSU!MANIA (СЛЕВА) --- */
+.game-container {
+    background: #1c1a21;
+    border-radius: 24px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    align-items: center;
+    border: 2px solid #2e2a36;
 }
 
-/* Стиль кнопок меню Osu! */
-.osu-btn {
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+    font-family: monospace;
+    font-size: 1.2rem;
+    color: #ff66aa;
+}
+
+.mania-board {
+    position: relative;
+    width: 240px;
+    height: 400px;
+    background: #0d0c0f;
+    border: 3px solid #383344;
+    border-radius: 8px;
+    display: flex;
+    overflow: hidden;
+}
+
+.lane {
+    flex: 1;
+    height: 100%;
+    border-right: 1px solid #232029;
+    position: relative;
+}
+.lane:last-child { border-right: none; }
+
+/* Зона, куда падают ноты */
+.hit-zone {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 45px;
+    background: rgba(255, 102, 170, 0.15);
+    border-top: 2px solid #ff66aa;
+    display: flex;
+}
+
+.key-hint {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    font-weight: bold;
+    color: #b9b5c4;
+    font-size: 0.9rem;
+}
+
+/* Активная подсветка зоны при нажатии */
+.key-hint.active {
+    background: rgba(255, 102, 170, 0.4);
+    color: #fff;
+    text-shadow: 0 0 5px #fff;
+}
+
+/* Сами падающие ноты */
+.note {
+    position: absolute;
+    width: 100%;
+    height: 15px;
+    background: #00ffff; /* Голубые крайние ноты */
+    box-shadow: 0 0 10px #00ffff;
+    left: 0;
+}
+
+/* Внутренние дорожки сделаем розовыми, как в osu! */
+#lane-1 .note, #lane-2 .note {
+    background: #ff66aa;
+    box-shadow: 0 0 10px #ff66aa;
+}
+
+/* Текст комбо и точности */
+.hit-rating {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.8rem;
+    font-weight: 900;
+    font-family: Arial, sans-serif;
+    pointer-events: none;
+}
+
+#start-game-btn {
+    margin-top: 15px;
+    background: #ff66aa;
+    border: none;
     color: white;
-    text-decoration: none;
-    padding: 14px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    background: #383344;
-    border-left: 6px solid #ff66aa; /* Розовая полоска слева */
-    border-radius: 8px;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    padding: 10px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.2s;
 }
+#start-game-btn:hover { transform: scale(1.05); background: #ff4499; }
 
-/* Интерактивный Osu-эффект при наведении на кнопку */
-.osu-btn:hover {
-    background: #ff66aa; /* Кнопка полностью заливается розовым */
-    border-left-color: #ffffff;
-    transform: translateX(8px) scale(1.02); /* Кнопка сдвигается вбок, как в меню игры */
-    box-shadow: 0 0 20px rgba(255, 102, 170, 0.6);
-}
-
-.btn-icon {
-    font-size: 1.2rem;
-}
-
-/* Анимация плавного появления страницы */
-@keyframes fadeInPage {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-/* Адаптивность для мобилок */
-@media (max-width: 480px) {
-    .profile-container {
-        padding: 30px 20px;
-    }
-    .osu-username {
-        font-size: 1.8rem;
-    }
+/* Адаптация под мобильные: перестраиваем в один столбец */
+@media (max-width: 768px) {
+    .main-layout { flex-direction: column-reverse; align-items: center; }
 }
