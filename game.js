@@ -80,7 +80,7 @@ window.addEventListener('keydown', (e) => {
                 // Идеально (300)
                 score += 200;
                 combo++;
-                showRating('300', '#ffcc00');
+                showRating('200', '#ffcc00');
                 destroyNote(targetNote);
             } else if (noteTop >= 280 && noteTop < 310) {
                 // Чуть раньше/позже (100)
