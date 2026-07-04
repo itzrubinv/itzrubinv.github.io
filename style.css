@@ -1,74 +1,129 @@
+/* Общие настройки экрана */
 body {
-    background-color: #121212; /* Твой темный фон */
+    background-color: #18161c; /* Глубокий темный фон с фиолетовым оттенком */
     color: #ffffff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    
-    /* Эффект плавного появления */
-    animation: fadeInPage 1.5s ease-in-out forwards;
-    opacity: 0; 
-}
-
-/* Описываем саму анимацию */
-@keyframes fadeInPage {
-    from {
-        opacity: 0;
-        transform: translateY(10px); /* Сайт мягко приподнимется при проявлении */
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-* {
+    font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    background-color: #121214;
-    color: #e1e1e6;
-    font-family: sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    overflow: hidden;
+    
+    /* Плавное проявление страницы */
+    animation: fadeInPage 1.2s ease-in-out forwards;
+    opacity: 0;
+}
+
+/* Главный контейнер профиля */
+.profile-container {
+    background: rgba(38, 35, 45, 0.7); /* Полупрозрачный темный блок */
+    backdrop-filter: blur(10px); /* Эффект размытия стекла */
+    border: 2px solid rgba(255, 102, 170, 0.2);
+    border-radius: 24px;
+    padding: 40px;
+    width: 90%;
+    max-width: 400px;
     text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 102, 170, 0.1);
 }
 
-.container {
-    padding: 20px;
-}
-
-.center-img {
+/* Круглая аватарка с неоновым свечением */
+.avatar-wrapper {
+    position: relative;
     width: 150px;
     height: 150px;
+    margin: 0 auto 20px auto;
+}
+
+.osu-avatar {
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
-    margin-bottom: 20px;
-    border: 3px solid #8257e5; /* Фиолетовая рамка */
-    background-color: #202024;
+    object-fit: cover;
+    border: 4px solid #ff66aa; /* Розовый бренд-цвет Osu! */
+    box-shadow: 0 0 20px #ff66aa, inset 0 0 20px #ff66aa;
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-h1 {
-    font-size: 2rem;
-    margin-bottom: 10px;
+/* Эффект при наведении на аватарку (слегка крутится и увеличивается) */
+.osu-avatar:hover {
+    transform: scale(1.08) rotate(5deg);
+    box-shadow: 0 0 30px #ff66aa;
 }
 
-p {
-    color: #a8a8b3;
+/* Ник и текст */
+.osu-username {
+    font-size: 2.2rem;
+    margin: 10px 0 5px 0;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
-/* Стили для мобильных устройств (экраны меньше 768px) */
-@media (max-width: 768px) {
-    body {
-        padding: 20px; /* Чтобы текст не прилипал к краям экрана смартфона */
+
+.osu-status {
+    color: #b9b5c4;
+    font-size: 1rem;
+    margin-bottom: 30px;
+    font-style: italic;
+}
+
+/* Контейнер для кнопок */
+.osu-links {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Стиль кнопок меню Osu! */
+.osu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: white;
+    text-decoration: none;
+    padding: 14px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: #383344;
+    border-left: 6px solid #ff66aa; /* Розовая полоска слева */
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Интерактивный Osu-эффект при наведении на кнопку */
+.osu-btn:hover {
+    background: #ff66aa; /* Кнопка полностью заливается розовым */
+    border-left-color: #ffffff;
+    transform: translateX(8px) scale(1.02); /* Кнопка сдвигается вбок, как в меню игры */
+    box-shadow: 0 0 20px rgba(255, 102, 170, 0.6);
+}
+
+.btn-icon {
+    font-size: 1.2rem;
+}
+
+/* Анимация плавного появления страницы */
+@keyframes fadeInPage {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
     }
-
-    .center-img {
-        max-width: 80%; /* Гифка займет максимум 80% ширины экрана телефона */
-        height: auto;   /* Пропорции не исказятся */
+    to {
+        opacity: 1;
+        transform: scale(1);
     }
+}
 
-    h1 {
-        font-size: 2rem; /* Чуть уменьшаем шрифт заголовка на мобилке */
+/* Адаптивность для мобилок */
+@media (max-width: 480px) {
+    .profile-container {
+        padding: 30px 20px;
+    }
+    .osu-username {
+        font-size: 1.8rem;
     }
 }
