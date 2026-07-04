@@ -510,3 +510,129 @@ body {
         gap: 20px;
     }
 }
+/* --- КНОПКА И ОКОШКО НАСТРОЕК --- */
+.game-container {
+    position: relative; /* Чтобы кнопка позиционировалась относительно контейнера */
+}
+
+.settings-toggle-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+    color: #b9b5c4;
+    transition: transform 0.2s, color 0.2s;
+    z-index: 10;
+}
+
+.settings-toggle-btn:hover {
+    color: #ff66aa;
+    transform: rotate(45deg) scale(1.1);
+}
+
+/* Выезжающая панель настроек */
+.settings-sidebar {
+    position: absolute;
+    top: 0;
+    right: -100%; /* По умолчанию скрыта справа */
+    width: 100%;
+    height: 100%;
+    background: rgba(28, 26, 33, 0.98);
+    border-radius: 24px;
+    z-index: 200;
+    padding: 20px;
+    box-sizing: border-box;
+    transition: right 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Класс, который мы будем вешать через JS для открытия */
+.settings-sidebar.open {
+    right: 0;
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #2e2a36;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+}
+
+.settings-header h3 {
+    margin: 0;
+    color: #ff66aa;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+}
+
+.settings-close-x {
+    background: transparent;
+    border: none;
+    color: #b9b5c4;
+    font-size: 1.8rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.settings-close-x:hover {
+    color: #ff4444;
+}
+
+/* Элементы настроек */
+.setting-item {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.setting-item label {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #e2dfeb;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.setting-item label span {
+    color: #00ffcc;
+    font-family: monospace;
+}
+
+/* Кастомные ползунки input[type="range"] */
+.setting-item input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: #2e2a36;
+    border-radius: 3px;
+    outline: none;
+}
+
+.setting-item input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #ff66aa;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.setting-item input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    background: #ff4499;
+}
+
+.setting-hint {
+    font-size: 0.75rem;
+    color: #787285;
+    margin-top: 4px;
+}

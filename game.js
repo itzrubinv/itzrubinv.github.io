@@ -1,4 +1,4 @@
-console.log("Osu!mania: Ultimate Game-Sense Edition Loaded!");
+console.log("Osu!mania: Ultimate Game-Sense & Settings Edition Loaded!");
 
 let score = 0;
 let combo = 0;
@@ -31,11 +31,49 @@ const avatar = document.querySelector('.osu-avatar');
 let activeHoldNotes = [null, null, null, null];
 let isKeyPressed = [false, false, false, false];
 
-// Мгновенное воспроизведение звуков без заиканий
+// НАСТРОЙКИ ЗВУКА И ТАЙМИНГОВ По Умолчанию (1.0 = 100%)
+let masterVolume = 1.0;
+let effectsVolume = 1.0;
+let audioOffset = 0; // в миллисекундах
+
+// Переключение видимости панели настроек
+function toggleSettings() {
+    const sidebar = document.getElementById('settings-sidebar');
+    if (sidebar) {
+        sidebar.classList.toggle('open');
+    }
+}
+
+// Обновление значений громкости и офсета на лету из ползунков
+function updateVolumeSettings() {
+    const masterSlider = document.getElementById('volume-master');
+    const effectsSlider = document.getElementById('volume-effects');
+    const offsetSlider = document.getElementById('audio-offset');
+
+    if (masterSlider) {
+        masterVolume = masterSlider.value / 100;
+        document.getElementById('val-volume-master').innerText = masterSlider.value + '%';
+        // Сразу динамически меняем громкость играющей музыки
+        if (music) music.volume = masterVolume;
+    }
+    
+    if (effectsSlider) {
+        effectsVolume = effectsSlider.value / 100;
+        document.getElementById('val-volume-effects').innerText = effectsSlider.value + '%';
+    }
+
+    if (offsetSlider) {
+        audioOffset = parseInt(offsetSlider.value);
+        document.getElementById('val-audio-offset').innerText = (audioOffset > 0 ? '+' : '') + audioOffset + ' ms';
+    }
+}
+
+// Мгновенное воспроизведение звуков без заиканий с учетом настроек громкости
 function playSound(soundId) {
     const sound = document.getElementById(soundId);
     if (sound) {
         sound.currentTime = 0;
+        sound.volume = effectsVolume; // Устанавливаем громкость эффектов
         sound.play().catch(e => console.log("Sound play prevented by browser policy"));
     }
 }
@@ -78,6 +116,7 @@ function startManiaGame() {
 
     if(music) {
         music.currentTime = 0;
+        music.volume = masterVolume; // Установка громкости музыки перед стартом
         initVisualizer();
         music.play().catch(e => console.log("Audio play deferred setup"));
         
@@ -166,7 +205,7 @@ function createNote(laneIndex, isHold) {
     const note = document.createElement('div');
     note.classList.add('note');
     
-    let noteHeight = 30; // Увеличенная базовая высота
+    let noteHeight = 30; // Увеличенная базовая высота ноты
     if (isHold) {
         note.classList.add('hold-note');
         noteHeight = 70;
@@ -222,7 +261,7 @@ window.addEventListener('keydown', (e) => {
         if (notesInLane.length > 0) {
             const targetNote = notesInLane[0];
             
-            // Защита от перехвата ноты, которая уже находится в процессе анимации исчезновения
+            // Игнорируем ноты, находящиеся в процессе анимации исчезновения
             if (targetNote.classList.contains('fade-out-hold')) return;
 
             const noteTop = parseInt(targetNote.style.top);
@@ -230,7 +269,10 @@ window.addEventListener('keydown', (e) => {
             const noteHeight = parseInt(targetNote.dataset.height);
             const hitHitbox = noteTop + noteHeight;
 
-            if (hitHitbox >= 340 && hitHitbox <= 400) {
+            // Расчет с учетом Audio Offset (1 пиксель ≈ 20мс задержки)
+            let adjustedHitbox = hitHitbox + (audioOffset / 20);
+
+            if (adjustedHitbox >= 340 && adjustedHitbox <= 400) {
                 createHitEffect(keyIndex);
                 hitNotesCount++;
 
@@ -239,7 +281,7 @@ window.addEventListener('keydown', (e) => {
                     score += 100;
                     combo++;
                     showRating('HOLD!', '#00ffcc');
-                    playSound('hit-sound'); // Звук начала зажатия холда
+                    playSound('hit-sound'); // Звук старта зажатия
                 } else {
                     perfectHits++;
                     score += 300;
@@ -266,11 +308,11 @@ window.addEventListener('keyup', (e) => {
             const note = activeHoldNotes[keyIndex];
             activeHoldNotes[keyIndex] = null;
             
-            // Останавливаем таймер движения и запускаем красивое растворение слайда
+            // Останавливаем таймер падения слайда и отправляем в красивое растворение
             clearInterval(note.dataset.intervalId);
             note.classList.add('fade-out-hold');
             createHitEffect(keyIndex); 
-            playSound('hit-sound');   // Финальный щелчок закрытия слайда
+            playSound('hit-sound');   // Звук успешного отпускания слайда
             
             setTimeout(() => {
                 note.remove();
@@ -359,7 +401,7 @@ function resetManiaGame() {
         canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    // Сброс фоновых вспышек при ресете
+    // Сброс фоновых вспышек комбо
     const flashOverlay = document.getElementById('combo-flash-overlay');
     if (flashOverlay) flashOverlay.className = 'combo-flash-overlay';
 
@@ -392,7 +434,7 @@ function updateUI() {
     document.getElementById('score').innerText = String(score).padStart(6, '0');
     document.getElementById('combo').innerText = combo;
 
-    // ОБРАБОТКА ТРИГГЕРОВ КОМБО ДЛЯ МАСШТАБНЫХ ЭФФЕКТОВ НА ФОНЕ
+    // ОБРАБОТКА ТРИГГЕРОВ КОМБО ДЛЯ МАСШТАБНЫХ ВСПЫШЕК НА ФОНЕ
     const flashOverlay = document.getElementById('combo-flash-overlay');
     if (flashOverlay) {
         flashOverlay.className = 'combo-flash-overlay';

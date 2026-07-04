@@ -3,20 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Osu!mania Profile Game</title>
+    <title>rubinv</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <div id="combo-flash-overlay" class="combo-flash-overlay"></div>
     <div class="fog-container">
         <div class="fog-layer"></div>
     </div>
 
     <div class="main-layout">
-
-    <div class="main-layout">
         
         <div class="game-container">
+            
+            <button id="settings-toggle-btn" class="settings-toggle-btn" onclick="toggleSettings()">⚙️</button>
+
+            <div id="settings-sidebar" class="settings-sidebar">
+                <div class="settings-header">
+                    <h3>Settings</h3>
+                    <button class="settings-close-x" onclick="toggleSettings()">×</button>
+                </div>
+                <div class="settings-body">
+                    <div class="setting-item">
+                        <label for="volume-master">Music Volume: <span id="val-volume-master">100%</span></label>
+                        <input type="range" id="volume-master" min="0" max="100" value="100" oninput="updateVolumeSettings()">
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label for="volume-effects">Effects Volume: <span id="val-volume-effects">100%</span></label>
+                        <input type="range" id="volume-effects" min="0" max="100" value="100" oninput="updateVolumeSettings()">
+                    </div>
+
+                    <div class="setting-item">
+                        <label for="audio-offset">Audio Offset: <span id="val-audio-offset">0 ms</span></label>
+                        <div class="offset-control">
+                            <input type="range" id="audio-offset" min="-200" max="200" value="0" step="5" oninput="updateVolumeSettings()">
+                        </div>
+                        <small class="setting-hint">Сдвиг нот, если звук отстает</small>
+                    </div>
+                </div>
+            </div>
+
             <div class="game-info">
                 <div class="score-box">Score: <span id="score">000000</span></div>
                 <div class="combo-box">Combo: <span id="combo">0</span></div>
@@ -71,13 +99,13 @@
             <div class="avatar-wrapper">
                 <img src="https://i.imgur.com/qHBMFD6.gif" alt="Avatar" class="osu-avatar">
             </div>
-            <h1 class="osu-username">itzrubinv</h1>
-            <p class="osu-status">Click the circles! 🌟</p>
+            <h1 class="osu-username">rubinv</h1>
+            <p class="osu-status">Click the tiles! 🌟</p>
             <div class="osu-links">
                 <a href="https://github.com/itzrubinv" target="_blank" class="osu-btn github">
                     <span class="btn-icon">🐙</span> GitHub
                 </a>
-                <a href="https://t.me/твой_ник" target="_blank" class="osu-btn telegram">
+                <a href="https://t.me/rubinv" target="_blank" class="osu-btn telegram">
                     <span class="btn-icon">✈️</span> Telegram
                 </a>
             </div>
@@ -88,8 +116,6 @@
     <audio id="game-music" src="voice.mp3" preload="auto"></audio>
     <audio id="hit-sound" src="hit.mp3" preload="auto"></audio>
     <audio id="miss-sound" src="miss.mp3" preload="auto"></audio>
-
-    <script src="game.js"></script>
 
     <script src="game.js"></script>
 </body>
