@@ -528,3 +528,56 @@ sizeResetBtn.addEventListener('click', () => {
     currentScale = 1.0;
     applyGameScale(currentScale);
 });
+// Находим элементы управления фоном
+const bgUploader = document.getElementById('bg-uploader');
+const bgResetBtn = document.getElementById('bg-reset-btn');
+
+// 1. Проверяем, сохранен ли фон в браузере с прошлого раза
+const savedBg = localStorage.getItem('custom-background');
+if (savedBg) {
+    applyBackground(savedBg);
+}
+
+// Функция для накатывания фона на страницу
+function applyBackground(base64Data) {
+    document.body.style.backgroundImage = `url(${base64Data})`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+    document.body.style.backgroundAttachment = 'fixed';
+    document.body.style.backgroundRepeat = 'no-repeat';
+}
+
+// 2. Слушаем изменение инпута (когда пользователь выбрал файл)
+if (bgUploader) {
+    bgUploader.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const base64Image = event.target.result;
+            
+            try {
+                // Сохраняем строку в локальную память
+                localStorage.setItem('custom-background', base64Image);
+                // Применяем
+                applyBackground(base64Image);
+            } catch (error) {
+                alert('Картинка весит слишком много! Попробуй сжать её или взять файл поменьше.');
+            }
+        };
+        
+        // Читаем файл как строку Base64
+        reader.readAsDataURL(file);
+    });
+}
+
+// 3. Сброс фона к дефолтному
+if (bgResetBtn) {
+    bgResetBtn.addEventListener('click', () => {
+        localStorage.removeItem('custom-background');
+        document.body.style.backgroundImage = 'none';
+        document.body.style.backgroundColor = '#121014'; // Возвращаем твой цвет
+        if (bgUploader) bgUploader.value = ''; // Сбрасываем имя файла в инпуте
+    });
+}

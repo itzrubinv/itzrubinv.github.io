@@ -41,12 +41,12 @@
                 <small class="setting-hint">Сдвиг нот при рассинхронизации</small>
             </div>
 
-            <div class="setting-item">
-                <label>Custom Background</label>
-                <input type="file" id="bg-uploader" accept="image/*" style="display: none;">
-                <button id="bg-upload-btn" class="result-close-btn" style="padding: 8px 15px; font-size: 0.85rem;">Upload Image</button>
-                <button id="bg-reset-btn" class="osu-btn" style="margin-top: 5px; padding: 6px; font-size: 0.8rem; border: none; color: #ff4444;">Reset Background</button>
-            </div>
+           <div class="setting-item">
+    <label>Custom Background</label>
+    <!-- Прямой инпут, стилизованный под кнопку -->
+    <input type="file" id="bg-uploader" accept="image/*" class="osu-btn" style="border: none; background: #2e2a36; padding: 8px; font-size: 0.9rem; cursor: pointer;">
+    <button type="button" id="bg-reset-btn" class="osu-btn" style="margin-top: 8px; padding: 6px; font-size: 0.8rem; border: none; color: #ff4444; background: transparent;">Reset Background</button>
+</div>
         </div>
     </div>
 
