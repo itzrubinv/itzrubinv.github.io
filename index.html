@@ -15,6 +15,8 @@
 
     <button id="settings-toggle-btn" class="settings-toggle-btn">⚙️</button>
 
+    <button id="game-toggle-btn" class="game-toggle-btn">🎮 Play osu!mania</button>
+
     <div id="settings-sidebar" class="settings-sidebar">
         <div class="settings-header">
             <h3>Settings</h3>
@@ -38,12 +40,28 @@
                 </div>
                 <small class="setting-hint">Сдвиг нот при рассинхронизации</small>
             </div>
+
+            <div class="setting-item">
+                <label>Custom Background</label>
+                <input type="file" id="bg-uploader" accept="image/*" style="display: none;">
+                <button id="bg-upload-btn" class="result-close-btn" style="padding: 8px 15px; font-size: 0.85rem;">Upload Image</button>
+                <button id="bg-reset-btn" class="osu-btn" style="margin-top: 5px; padding: 6px; font-size: 0.8rem; border: none; color: #ff4444;">Reset Background</button>
+            </div>
         </div>
     </div>
 
-    <div class="main-layout">
-        
-        <div class="game-container">
+    <div id="game-sidebar" class="game-sidebar">
+        <div class="game-sidebar-header">
+            <button id="game-close-x" class="settings-close-x">×</button>
+            
+            <div class="size-controls">
+                <button id="size-decrease-btn" title="Уменьшить">🔍-</button>
+                <button id="size-reset-btn" title="Сбросить">100%</button>
+                <button id="size-increase-btn" title="Увеличить">🔍+</button>
+            </div>
+        </div>
+
+        <div class="game-container" id="resizable-game">
             <div class="game-info">
                 <div class="score-box">Score: <span id="score">000000</span></div>
                 <div class="combo-box">Combo: <span id="combo">0</span></div>
@@ -93,7 +111,9 @@
                 <button id="reset-game-btn" style="display: none;">Reset</button>
             </div>
         </div>
+    </div>
 
+    <div class="main-layout">
         <div class="profile-container">
             <div class="avatar-wrapper">
                 <img src="https://i.imgur.com/qHBMFD6.gif" alt="Avatar" class="osu-avatar">
@@ -109,13 +129,11 @@
                 </a>
             </div>
         </div>
-
     </div>
 
     <audio id="game-music" src="voice.mp3" preload="auto"></audio>
     <audio id="hit-sound" src="hit.mp3" preload="auto"></audio>
     <audio id="miss-sound" src="miss.mp3" preload="auto"></audio>
 
-    <script src="game.js?v=4"></script>
+    <script src="game.js?v=5"></script>
 </body>
-</html>

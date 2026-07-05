@@ -473,3 +473,58 @@ function showRating(text, color) {
     ratingEl.style.opacity = 1;
     setTimeout(() => { ratingEl.style.opacity = 0; }, 250);
 }
+// --- ЛОГИКА ШТОРКИ ИГРЫ ---
+const gameSidebar = document.getElementById('game-sidebar');
+const gameToggleBtn = document.getElementById('game-toggle-btn');
+const gameCloseX = document.getElementById('game-close-x');
+
+// Открыть игру
+gameToggleBtn.addEventListener('click', () => {
+    gameSidebar.classList.add('open');
+});
+
+// Закрыть игру
+gameCloseX.addEventListener('click', () => {
+    gameSidebar.classList.remove('open');
+});
+
+// --- ЛОГИКА ИЗМЕНЕНИЯ РАЗМЕРА ИГРЫ (МАСШТАБИРОВАНИЕ) ---
+const resizableGame = document.getElementById('resizable-game');
+const sizeDecreaseBtn = document.getElementById('size-decrease-btn');
+const sizeIncreaseBtn = document.getElementById('size-increase-btn');
+const sizeResetBtn = document.getElementById('size-reset-btn');
+
+// Текущий масштаб (1 = 100%)
+let currentScale = parseFloat(localStorage.getItem('game-scale')) || 1.0;
+
+// Функция применения размера
+function applyGameScale(scale) {
+    resizableGame.style.transform = `scale(${scale})`;
+    sizeResetBtn.textContent = `${Math.round(scale * 100)}%`;
+    localStorage.setItem('game-scale', scale);
+}
+
+// Применяем сохраненный масштаб при загрузке
+applyGameScale(currentScale);
+
+// Кнопка "+"
+sizeIncreaseBtn.addEventListener('click', () => {
+    if (currentScale < 1.5) { // Ограничим максимум до 150%, чтоб за экран не вылезало
+        currentScale += 0.1;
+        applyGameScale(currentScale);
+    }
+});
+
+// Кнопка "-"
+sizeDecreaseBtn.addEventListener('click', () => {
+    if (currentScale > 0.7) { // Ограничим минимум до 70%
+        currentScale -= 0.1;
+        applyGameScale(currentScale);
+    }
+});
+
+// Кнопка "Сброс"
+sizeResetBtn.addEventListener('click', () => {
+    currentScale = 1.0;
+    applyGameScale(currentScale);
+});
