@@ -581,3 +581,4 @@ if (bgResetBtn) {
         if (bgUploader) bgUploader.value = ''; // Сбрасываем имя файла в инпуте
     });
 }
+d
