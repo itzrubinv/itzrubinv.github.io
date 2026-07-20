@@ -1,19 +1,23 @@
-/* --- ОБЩИЕ НАСТРОЙКИ ЭКРАНА --- */
+/* --- ОБЩИЕ НАСТРОЙКИ ЭКРАНА И ФОНА --- */
 *, *::before, *::after {
     box-sizing: border-box;
+}
+
+html, body {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 
 body {
     background-color: #121014;
     color: #ffffff;
     font-family: 'Segoe UI', Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
+    padding: 40px 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    box-sizing: border-box;
+    position: relative;
     /* Отключаем выделение текста и жесты зума для мобилок */
     user-select: none;
     -webkit-user-select: none;
@@ -29,6 +33,7 @@ body {
     align-items: flex-start;
     justify-content: center;
     box-sizing: border-box;
+    z-index: 5;
 }
 
 /* --- СТИЛИ ИГРЫ OSU!MANIA (ЛЕВАЯ КОЛОНКА) --- */
@@ -44,6 +49,8 @@ body {
     box-sizing: border-box;
     flex-shrink: 0;
     z-index: 5;
+    transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transform-origin: top center;
 }
 
 .game-info {
@@ -107,13 +114,13 @@ body {
     border-right: none;
 }
 
-/* Хит-зона (куда падают ноты и где происходят тапы) */
+/* Хит-зона (куда падают ноты) */
 .hit-zone {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 60px; /* Увеличено для удобства тапа пальцем */
+    height: 60px;
     background: rgba(255, 102, 170, 0.1);
     border-top: 2px solid #ff66aa;
     display: flex;
@@ -246,6 +253,7 @@ body {
     gap: 12px;
 }
 
+/* Кнопки соцсетей */
 .osu-btn {
     display: flex;
     align-items: center;
@@ -261,10 +269,44 @@ body {
     transition: all 0.2s ease;
 }
 
+.osu-btn i {
+    font-size: 1.2rem;
+    transition: color 0.2s ease;
+}
+
 .osu-btn:hover {
-    background: #ff66aa;
     transform: translateX(6px);
-    box-shadow: 0 0 15px rgba(255, 102, 170, 0.6);
+}
+
+/* Модификаторы кнопок Discord и Telegram */
+.osu-btn.discord {
+    border-left-color: #5865F2;
+}
+
+.osu-btn.discord i {
+    color: #5865F2;
+}
+
+.osu-btn.discord:hover {
+    background: #5865F2;
+    box-shadow: 0 0 15px rgba(88, 101, 242, 0.6);
+}
+
+.osu-btn.telegram {
+    border-left-color: #229ED9;
+}
+
+.osu-btn.telegram i {
+    color: #229ED9;
+}
+
+.osu-btn.telegram:hover {
+    background: #229ED9;
+    box-shadow: 0 0 15px rgba(34, 158, 217, 0.6);
+}
+
+.osu-btn:hover i {
+    color: #ffffff !important;
 }
 
 /* --- КНОПКИ УПРАВЛЕНИЯ ИГРОЙ --- */
@@ -296,6 +338,7 @@ body {
     color: white;
     width: 100%;
 }
+
 #start-game-btn:hover {
     transform: scale(1.03);
     background: #ff4499;
@@ -307,6 +350,7 @@ body {
     border: 2px solid #00ffcc !important;
     color: #00ffcc;
 }
+
 #pause-game-btn:hover {
     transform: scale(1.05);
     background: #00ffcc;
@@ -319,6 +363,7 @@ body {
     border: 2px solid #ff4444 !important;
     color: #ff4444;
 }
+
 #reset-game-btn:hover {
     transform: scale(1.05);
     background: #ff4444;
@@ -383,6 +428,7 @@ body {
     cursor: pointer;
     transition: 0.2s;
 }
+
 .result-close-btn:hover {
     transform: scale(1.05);
     background: #ff4499;
@@ -400,13 +446,13 @@ body {
     opacity: 0.15;
 }
 
-/* --- ЭФФЕКТЫ ОСНОВНОГО ФОНА САЙТА --- */
+/* --- ОБНОВЛЕННЫЙ ТУМАН НА ВСЮ СТРАНИЦУ (БЕЗ РЕЗКИХ ОБРЫВОВ) --- */
 .fog-container {
     position: fixed;
-    bottom: 0;
+    top: 0;
     left: 0;
-    width: 100%;
-    height: 250px;
+    width: 100vw;
+    height: 100vh;
     z-index: -1;
     overflow: hidden;
     pointer-events: none;
@@ -416,10 +462,10 @@ body {
     position: absolute;
     width: 200%;
     height: 100%;
-    background: radial-gradient(circle at 50% 120%, rgba(255, 102, 170, 0.18) 0%, rgba(181, 0, 255, 0.05) 40%, transparent 70%);
-    bottom: -50px;
+    background: radial-gradient(circle at 50% 100%, rgba(255, 102, 170, 0.25) 0%, rgba(181, 0, 255, 0.08) 50%, transparent 80%);
+    bottom: 0;
     left: 0;
-    filter: blur(40px);
+    filter: blur(50px);
     animation: waveFog 12s ease-in-out infinite alternate;
 }
 
@@ -485,7 +531,7 @@ body {
 
 .hit-effect {
     position: absolute;
-    bottom: 60px; /* Смещено с учетом новой высоты хит-зоны */
+    bottom: 60px;
     left: 50%;
     transform: translateX(-50%) scale(0);
     width: 40px;
@@ -512,11 +558,11 @@ body {
     to { opacity: 1; transform: scale(1); }
 }
 
-/* --- КНОПКА И ОКОШКО НАСТРОЕК (ФИКСИРОВАННЫЕ НА СТРАНИЦЕ) --- */
+/* --- КНОПКА И ОКОШКО НАСТРОЕК --- */
 .settings-toggle-btn {
     position: fixed;
     top: 25px;
-    right: 25px;
+    right: 25px !important;
     background: rgba(46, 42, 54, 0.6);
     backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 102, 170, 0.3);
@@ -643,19 +689,11 @@ body {
     margin-top: 4px;
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
-    .main-layout {
-        flex-direction: column-reverse;
-        align-items: center;
-        gap: 20px;
-    }
-}
 /* --- КНОПКА ОТКРЫТИЯ ИГРЫ В ПРАВОМ УГЛУ --- */
 .game-toggle-btn {
     position: fixed;
     top: 25px;
-    right: 85px; /* Смещена левее шестеренки */
+    right: 85px;
     background: #ff66aa;
     border: none;
     color: white;
@@ -674,23 +712,18 @@ body {
     transform: scale(1.05);
 }
 
-/* Сместим кнопку настроек чуть правее, чтобы они красиво стояли в ряд */
-.settings-toggle-btn {
-    right: 25px !important;
-}
-
 /* --- ВЫЕЗЖАЮЩАЯ ШТОРКА ДЛЯ ИГРЫ --- */
 .game-sidebar {
     position: fixed;
     top: 0;
-    right: -500px; /* Скрыта изначально, ширина с запасом под масштабирование */
+    right: -500px;
     width: 460px;
     height: 100vh;
     background: rgba(20, 18, 24, 0.97);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-left: 2px solid rgba(255, 102, 170, 0.3);
-    z-index: 1500; /* Чуть ниже шестеренки настроек, но выше профиля */
+    z-index: 1500;
     padding: 20px;
     box-sizing: border-box;
     transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -698,14 +731,13 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow-y: auto; /* Появится скролл, если игра станет слишком большой */
+    overflow-y: auto;
 }
 
 .game-sidebar.open {
     right: 0;
 }
 
-/* Шапка шторки игры */
 .game-sidebar-header {
     width: 100%;
     display: flex;
@@ -716,7 +748,6 @@ body {
     padding-bottom: 10px;
 }
 
-/* Блок кнопок изменения размера */
 .size-controls {
     display: flex;
     gap: 5px;
@@ -739,13 +770,15 @@ body {
     border-color: #ff66aa;
 }
 
-/* --- ДИНАМИЧЕСКИЙ МАСШТАБ ИГРЫ --- */
-.game-container {
-    transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-    transform-origin: top center; /* Масштабируем относительно верха */
+/* --- АДАПТИВНОСТЬ --- */
+@media (max-width: 768px) {
+    .main-layout {
+        flex-direction: column-reverse;
+        align-items: center;
+        gap: 20px;
+    }
 }
 
-/* Адаптивность под совсем узкие мобилки */
 @media (max-width: 480px) {
     .game-sidebar {
         width: 100%;
@@ -756,37 +789,4 @@ body {
         font-size: 0.85rem;
         right: 70px;
     }
-}
-.osu-btn.discord {
-    border-left-color: #5865F2;
-}
-.osu-btn.discord:hover {
-    background: #5865F2;
-    box-shadow: 0 0 15px rgba(88, 101, 242, 0.6);
-}
-.osu-btn.telegram {
-    border-left-color: #229ED9; /* Фирменный голубой цвет Telegram */
-}
-
-.osu-btn.telegram:hover {
-    background: #229ED9;
-    box-shadow: 0 0 15px rgba(34, 158, 217, 0.6);
-}
-/* --- ЦВЕТНЫЕ ИКОНКИ --- */
-
-/* Иконка Discord: задаем цвет */
-.osu-btn.discord i {
-    color: #5865F2; /* Фирменный цвет Discord */
-    margin-right: 8px; /* Немного отступаем от текста */
-}
-
-/* Иконка Telegram: задаем цвет */
-.osu-btn.telegram i {
-    color: #229ED9; /* Фирменный цвет Telegram */
-    margin-right: 8px; /* Немного отступаем от текста */
-}
-
-/* --- ХОВЕР (наведение): делаем иконки белыми при наведении --- */
-.osu-btn:hover i {
-    color: white !important;
 }
