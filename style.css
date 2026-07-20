@@ -790,3 +790,22 @@ body {
         right: 70px;
     }
 }
+.high-score-board {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    background: #2e2a36;
+    padding: 8px 14px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    color: #b9b5c4;
+    border: 1px solid rgba(255, 102, 170, 0.2);
+    box-sizing: border-box;
+}
+
+.high-score-board strong {
+    color: #ffcc00;
+    font-family: monospace;
+    font-size: 1rem;
+}

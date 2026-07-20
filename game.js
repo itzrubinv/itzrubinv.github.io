@@ -36,6 +36,9 @@ let audioOffset = 0;
 
 // Привязка событий после загрузки документа
 document.addEventListener('DOMContentLoaded', () => {
+    // Загрузка сохраненного рекорда
+    updateHighScoreUI();
+
     document.getElementById('settings-toggle-btn').addEventListener('click', toggleSettings);
     document.getElementById('settings-close-x').addEventListener('click', toggleSettings);
     
@@ -373,6 +376,9 @@ function endGameAndShowResults() {
     else if (rank === 'B' || rank === 'C') rankEl.style.color = '#ff66aa';
     else rankEl.style.color = '#ff4444';
 
+    // Сохраняем личный рекорд при финише игры
+    checkAndUpdateHighScore(score, maxCombo);
+
     document.getElementById('result-screen').style.display = 'flex';
     document.querySelectorAll('.note').forEach(n => n.remove());
 }
@@ -473,6 +479,34 @@ function showRating(text, color) {
     ratingEl.style.opacity = 1;
     setTimeout(() => { ratingEl.style.opacity = 0; }, 250);
 }
+
+// --- ЛОГИКА ТАБЛИЦЫ РЕКОРДОВ (LOCALSTORAGE) ---
+function updateHighScoreUI() {
+    const savedScore = localStorage.getItem("osu_best_score") || 0;
+    const savedCombo = localStorage.getItem("osu_best_combo") || 0;
+    
+    const scoreElem = document.getElementById("best-score");
+    const comboElem = document.getElementById("best-combo");
+    
+    if (scoreElem) scoreElem.textContent = savedScore;
+    if (comboElem) comboElem.textContent = savedCombo;
+}
+
+function checkAndUpdateHighScore(currentScore, currentCombo) {
+    const savedScore = parseInt(localStorage.getItem("osu_best_score") || 0);
+    const savedCombo = parseInt(localStorage.getItem("osu_best_combo") || 0);
+
+    if (currentScore > savedScore) {
+        localStorage.setItem("osu_best_score", currentScore);
+    }
+
+    if (currentCombo > savedCombo) {
+        localStorage.setItem("osu_best_combo", currentCombo);
+    }
+
+    updateHighScoreUI();
+}
+
 // --- ЛОГИКА ШТОРКИ ИГРЫ ---
 const gameSidebar = document.getElementById('game-sidebar');
 const gameToggleBtn = document.getElementById('game-toggle-btn');
@@ -528,6 +562,7 @@ sizeResetBtn.addEventListener('click', () => {
     currentScale = 1.0;
     applyGameScale(currentScale);
 });
+
 // Находим элементы управления фоном
 const bgUploader = document.getElementById('bg-uploader');
 const bgResetBtn = document.getElementById('bg-reset-btn');
@@ -581,4 +616,3 @@ if (bgResetBtn) {
         if (bgUploader) bgUploader.value = ''; // Сбрасываем имя файла в инпуте
     });
 }
-d
