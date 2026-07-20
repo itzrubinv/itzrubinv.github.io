@@ -772,3 +772,21 @@ body {
     background: #229ED9;
     box-shadow: 0 0 15px rgba(34, 158, 217, 0.6);
 }
+/* --- ЦВЕТНЫЕ ИКОНКИ --- */
+
+/* Иконка Discord: задаем цвет */
+.osu-btn.discord i {
+    color: #5865F2; /* Фирменный цвет Discord */
+    margin-right: 8px; /* Немного отступаем от текста */
+}
+
+/* Иконка Telegram: задаем цвет */
+.osu-btn.telegram i {
+    color: #229ED9; /* Фирменный цвет Telegram */
+    margin-right: 8px; /* Немного отступаем от текста */
+}
+
+/* --- ХОВЕР (наведение): делаем иконки белыми при наведении --- */
+.osu-btn:hover i {
+    color: white !important;
+}
