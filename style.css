@@ -764,3 +764,11 @@ body {
     background: #5865F2;
     box-shadow: 0 0 15px rgba(88, 101, 242, 0.6);
 }
+.osu-btn.telegram {
+    border-left-color: #229ED9; /* Фирменный голубой цвет Telegram */
+}
+
+.osu-btn.telegram:hover {
+    background: #229ED9;
+    box-shadow: 0 0 15px rgba(34, 158, 217, 0.6);
+}
