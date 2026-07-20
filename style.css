@@ -757,3 +757,10 @@ body {
         right: 70px;
     }
 }
+.osu-btn.discord {
+    border-left-color: #5865F2;
+}
+.osu-btn.discord:hover {
+    background: #5865F2;
+    box-shadow: 0 0 15px rgba(88, 101, 242, 0.6);
+}
