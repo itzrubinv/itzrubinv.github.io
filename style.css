@@ -902,3 +902,41 @@ body {
     z-index: -1; /* Опускаем за все элементы страницы */
     pointer-events: none; /* Пропускает клики сквозь себя */
 }
+/* --- 2. КАСТОМНЫЙ НЕОНОВЫЙ КУРСОР --- */
+/* Скрываем стандартный курсор на компьютерах (на тачскринах оставляем) */
+@media (pointer: fine) {
+    body, a, button, input, select {
+        cursor: none !important;
+    }
+}
+
+.custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #00ffcc;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, border-color 0.2s, background-color 0.2s;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.6);
+}
+
+/* Эффект при наведении на интерактивные элементы */
+.custom-cursor.hovered {
+    width: 32px;
+    height: 32px;
+    border-color: #ff66aa;
+    background-color: rgba(255, 102, 170, 0.15);
+    box-shadow: 0 0 15px rgba(255, 102, 170, 0.8);
+}
+
+/* --- 3. 3D TILT EFFECT ДЛЯ КАРТОЧКИ --- */
+.profile-container {
+    transition: transform 0.1s ease-out;
+    will-change: transform;
+    transform-style: preserve-3d;
+}

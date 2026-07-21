@@ -764,3 +764,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
     animate();
 })();
+// --- 2. ЛОГИКА КАСТОМНОГО КУРСОРA ---
+(function initCustomCursor() {
+    const cursor = document.getElementById('custom-cursor');
+    if (!cursor) return;
+
+    // Движение курсора за мышкой
+    window.addEventListener('mousemove', (e) => {
+        cursor.style.left = `${e.clientX}px`;
+        cursor.style.top = `${e.clientY}px`;
+    });
+
+    // Увеличение курсора при наведении на кнопки, ссылки и инпуты
+    const interactiveElements = document.querySelectorAll('a, button, input, select, .glowing-name');
+    interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+    });
+})();
+
+// --- 3. 3D TILT-ЭФФЕКТ ДЛЯ КАРТОЧКИ ПРОФИЛЯ ---
+(function initCardTilt() {
+    const card = document.querySelector('.profile-container');
+    if (!card) return;
+
+    window.addEventListener('mousemove', (e) => {
+        // Вычисляем центр экрана
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+
+        // Отклонение курсора от центра
+        const mouseX = e.clientX - centerX;
+        const mouseY = e.clientY - centerY;
+
+        // Угол наклона (чем меньше делитель, тем сильнее наклон)
+        const rotateX = (-mouseY / centerY) * 8; // макс. 8 градусов по X
+        const rotateY = (mouseX / centerX) * 8;   // макс. 8 градусов по Y
+
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    });
+
+    // Возвращаем карточку в исходное положение, если мышка ушла с окна
+    document.addEventListener('mouseleave', () => {
+        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+    });
+})();
