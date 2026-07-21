@@ -809,3 +809,42 @@ body {
     font-family: monospace;
     font-size: 1rem;
 }
+/* --- ЭФФЕКТ ПЕРЕЛИВА И СВЕЧЕНИЯ ДЛЯ ИМЕНИ --- */
+.glowing-name {
+    display: inline-block;
+    transition: all 0.4s ease;
+    cursor: pointer;
+}
+
+/* Эффект при наведении мышкой */
+.glowing-name:hover {
+    /* Градиентный перелив текста */
+    background: linear-gradient(90deg, #ff66aa, #00ffcc, #ffcc00, #b500ff, #ff66aa);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    /* Неоновое свечение вокруг букв */
+    text-shadow: 
+        0 0 10px rgba(255, 102, 170, 0.8),
+        0 0 20px rgba(0, 255, 204, 0.6),
+        0 0 30px rgba(181, 0, 255, 0.4);
+        
+    /* Анимация движения градиента и пульсации */
+    animation: shineGlow 2s linear infinite, pulseScale 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes shineGlow {
+    to {
+        background-position: 200% center;
+    }
+}
+
+@keyframes pulseScale {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(1.05);
+    }
+}
