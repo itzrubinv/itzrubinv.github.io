@@ -616,3 +616,56 @@ if (bgResetBtn) {
         if (bgUploader) bgUploader.value = ''; // Сбрасываем имя файла в инпуте
     });
 }
+// --- DISCORD LANYARD INTEGRATION ---
+const DISCORD_ID = "935086307401695293";
+
+async function fetchDiscordStatus() {
+    try {
+        const response = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
+        const data = await response.json();
+
+        if (!data.success) return;
+
+        const lanyard = data.data;
+        const dot = document.getElementById('discord-dot');
+        const customStatusElem = document.getElementById('discord-custom-status');
+        const activityElem = document.getElementById('discord-activity');
+
+        // 1. Обновляем индикатор сети
+        dot.className = `status-dot ${lanyard.discord_status}`;
+
+        // 2. Активность или кастомный статус
+        if (lanyard.listening_to_spotify) {
+            customStatusElem.innerText = `🎧 Слушает Spotify`;
+            activityElem.innerText = `${lanyard.spotify.song} — ${lanyard.spotify.artist}`;
+        } else if (lanyard.activities && lanyard.activities.length > 0) {
+            // Берем первую активность (игру)
+            const game = lanyard.activities.find(act => act.type === 0) || lanyard.activities[0];
+            
+            if (game.type === 4) { // Пользовательский статус
+                customStatusElem.innerText = game.state || "В сети";
+                activityElem.innerText = "";
+            } else {
+                customStatusElem.innerText = `🎮 Играет в ${game.name}`;
+                activityElem.innerText = game.details || game.state || "";
+            }
+        } else {
+            const statusMap = {
+                online: "В сети",
+                idle: "Неактивен",
+                dnd: "Не беспокоить",
+                offline: "Не в сети"
+            };
+            customStatusElem.innerText = statusMap[lanyard.discord_status] || "Оффлайн";
+            activityElem.innerText = "";
+        }
+    } catch (err) {
+        console.error("Ошибка загрузки Lanyard:", err);
+    }
+}
+
+// Запрашиваем статус сразу при загрузке и обновляем каждые 15 секунд
+document.addEventListener("DOMContentLoaded", () => {
+    fetchDiscordStatus();
+    setInterval(fetchDiscordStatus, 15000);
+});

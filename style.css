@@ -848,3 +848,47 @@ body {
         transform: scale(1.05);
     }
 }
+/* --- DISCORD LANYARD STATUS WIDGET --- */
+.discord-status-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(46, 42, 54, 0.6);
+    border: 1px solid rgba(255, 102, 170, 0.2);
+    backdrop-filter: blur(8px);
+    padding: 10px 16px;
+    border-radius: 12px;
+    margin: 12px auto;
+    max-width: 280px;
+    box-sizing: border-box;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Цвета статусов Discord */
+.status-dot.online { background-color: #23a55a; box-shadow: 0 0 10px #23a55a; }
+.status-dot.idle { background-color: #f0b232; box-shadow: 0 0 10px #f0b232; }
+.status-dot.dnd { background-color: #f23f43; box-shadow: 0 0 10px #f23f43; }
+.status-dot.offline { background-color: #80848e; }
+
+.discord-info {
+    text-align: left;
+    font-size: 0.85rem;
+}
+
+.discord-custom-status {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.discord-activity {
+    color: #b9b5c4;
+    font-size: 0.78rem;
+    margin-top: 2px;
+}
