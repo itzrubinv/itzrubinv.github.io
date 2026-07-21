@@ -892,3 +892,13 @@ body {
     font-size: 0.78rem;
     margin-top: 2px;
 }
+/* --- АНИМИРОВАННЫЙ ИНТЕРАКТИВНЫЙ ФОН (CANVAS) --- */
+#bg-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1; /* Опускаем за все элементы страницы */
+    pointer-events: none; /* Пропускает клики сквозь себя */
+}
