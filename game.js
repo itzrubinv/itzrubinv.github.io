@@ -783,28 +783,26 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 })();
 
-// --- 3. 3D TILT-ЭФФЕКТ ДЛЯ КАРТОЧКИ ПРОФИЛЯ ---
 (function initCardTilt() {
     const card = document.querySelector('.profile-container');
-    if (!card) return;
+    // Проверяем, что у пользователя есть мышь (не тачскрин)
+    const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    
+    if (!card || !isDesktop) return;
 
     window.addEventListener('mousemove', (e) => {
-        // Вычисляем центр экрана
         const centerX = window.innerWidth / 2;
         const centerY = window.innerHeight / 2;
 
-        // Отклонение курсора от центра
         const mouseX = e.clientX - centerX;
         const mouseY = e.clientY - centerY;
 
-        // Угол наклона (чем меньше делитель, тем сильнее наклон)
-        const rotateX = (-mouseY / centerY) * 8; // макс. 8 градусов по X
-        const rotateY = (mouseX / centerX) * 8;   // макс. 8 градусов по Y
+        const rotateX = (-mouseY / centerY) * 8;
+        const rotateY = (mouseX / centerX) * 8;
 
         card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
     });
 
-    // Возвращаем карточку в исходное положение, если мышка ушла с окна
     document.addEventListener('mouseleave', () => {
         card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
     });

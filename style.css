@@ -909,34 +909,79 @@ body {
         cursor: none !important;
     }
 }
+/* Включаем кастомный курсор ТОЛЬКО на устройствах с мышью */
+@media (hover: hover) and (pointer: fine) {
+    body, a, button, input, select {
+        cursor: none !important;
+    }
 
-.custom-cursor {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 18px;
-    height: 18px;
-    border: 2px solid #00ffcc;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    transition: width 0.2s, height 0.2s, border-color 0.2s, background-color 0.2s;
-    box-shadow: 0 0 10px rgba(0, 255, 204, 0.6);
+    .custom-cursor {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 18px;
+        height: 18px;
+        border: 2px solid #00ffcc;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%);
+        transition: width 0.2s, height 0.2s, border-color 0.2s, background-color 0.2s;
+        box-shadow: 0 0 10px rgba(0, 255, 204, 0.6);
+    }
+
+    .custom-cursor.hovered {
+        width: 32px;
+        height: 32px;
+        border-color: #ff66aa;
+        background-color: rgba(255, 102, 170, 0.15);
+        box-shadow: 0 0 15px rgba(255, 102, 170, 0.8);
+    }
 }
 
-/* Эффект при наведении на интерактивные элементы */
-.custom-cursor.hovered {
-    width: 32px;
-    height: 32px;
-    border-color: #ff66aa;
-    background-color: rgba(255, 102, 170, 0.15);
-    box-shadow: 0 0 15px rgba(255, 102, 170, 0.8);
+/* Скрываем элемент курсора на сенсорных экранах */
+@media (hover: none) or (pointer: coarse) {
+    .custom-cursor {
+        display: none !important;
+    }
 }
-
-/* --- 3. 3D TILT EFFECT ДЛЯ КАРТОЧКИ --- */
 .profile-container {
-    transition: transform 0.1s ease-out;
-    will-change: transform;
-    transform-style: preserve-3d;
+    background: rgba(30, 26, 38, 0.55) !important;
+    backdrop-filter: blur(16px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+    border: 1px solid rgba(255, 102, 170, 0.25) !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), 
+                0 0 15px rgba(255, 102, 170, 0.1) !important;
+    border-radius: 20px;
+}
+/* Анимация иконок и кнопок соцсетей */
+.osu-links .osu-btn {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+                box-shadow 0.25s ease, 
+                border-color 0.25s ease !important;
+}
+
+.osu-links .osu-btn i {
+    transition: transform 0.25s ease !important;
+    display: inline-block;
+}
+
+/* Подъем всей кнопки и иконки при наведении */
+.osu-links .osu-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+}
+
+.osu-links .osu-btn:hover i {
+    transform: translateY(-1px) scale(1.15);
+}
+
+/* Дополнительное неоновое свечение для каждой соцсети */
+.osu-btn.discord:hover {
+    box-shadow: 0 0 15px rgba(88, 101, 242, 0.5) !important;
+    border-color: rgba(88, 101, 242, 0.8) !important;
+}
+
+.osu-btn.telegram:hover {
+    box-shadow: 0 0 15px rgba(36, 161, 222, 0.5) !important;
+    border-color: rgba(36, 161, 222, 0.8) !important;
 }
