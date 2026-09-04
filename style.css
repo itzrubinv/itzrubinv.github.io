@@ -979,5 +979,5 @@ body {
 .osu-btn.osu-profile:hover {
     box-shadow: 0 0 15px rgba(255, 102, 170, 0.6) !important;
     border-color: rgba(255, 102, 170, 0.9) !important;
-    background: rgba(255, 102, 170, 0.15) !important;
+    background: rgba(255, 102, 170, 0.9) !important;
 }
