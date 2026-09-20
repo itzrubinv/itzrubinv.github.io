@@ -171,14 +171,18 @@
 
     <script src="game.js?v=5"></script>
     <!-- Фоновая музыка и кнопка управления -->
-<audio id="bg-audio" loop preload="auto">
-    <source src="bg-music.mp3" type="audio/mpeg">
-</audio>
+    <audio id="bg-audio" loop preload="auto">
+        <source src="bg-music.mp3" type="audio/mpeg">
+    </audio>
 
-<div id="music-widget" class="music-widget" title="Включить/Выключить музыку">
-    <div class="music-icon">
-        <i class="fa-solid fa-compact-disc disc-icon"></i>
+    <div id="music-widget" class="music-widget" title="Включить/Выключить музыку">
+        <div class="music-icon">
+            <i class="fa-solid fa-compact-disc disc-icon"></i>
+        </div>
+        <span class="music-text">Music OFF</span>
     </div>
-    <span class="music-text">Music OFF</span>
-</div>
+
+    <!-- СКРИПТ ДОЛЖЕН БЫТЬ САМЫМ ПОСЛЕДНИМ -->
+    <script src="game.js?v=6"></script>
+</body>
 </body> 
