@@ -723,19 +723,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     audio.volume = 0.3; // Громкость 30%
 
-    widget.addEventListener('click', () => {
+    widget.addEventListener('click', async () => {
         if (audio.paused) {
-            const playPromise = audio.play();
-
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    // Успешно заиграло
-                    widget.classList.add('playing');
-                    if (text) text.textContent = 'Music ON';
-                }).catch(err => {
-                    console.error("Ошибка воспроизведения аудио:", err);
-                    if (text) text.textContent = 'Error loading';
-                });
+            try {
+                await audio.play();
+                widget.classList.add('playing');
+                if (text) text.textContent = 'Music ON';
+                console.log("Музыка успешно заиграла!");
+            } catch (err) {
+                console.error("Ошибка при воспроизведении:", err);
+                if (text) text.textContent = 'Error';
             }
         } else {
             audio.pause();
