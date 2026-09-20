@@ -713,3 +713,29 @@ document.addEventListener("DOMContentLoaded", () => {
         card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
     });
 })();
+// --- УПРАВЛЕНИЕ ФОНОВОЙ МУЗЫКОЙ ---
+(function initMusicPlayer() {
+    const audio = document.getElementById('bg-audio');
+    const widget = document.getElementById('music-widget');
+    const text = widget ? widget.querySelector('.music-text') : null;
+
+    if (!audio || !widget) return;
+
+    // Громкость по умолчанию (30%)
+    audio.volume = 0.3;
+
+    widget.addEventListener('click', () => {
+        if (audio.paused) {
+            audio.play().then(() => {
+                widget.classList.add('playing');
+                if (text) text.textContent = 'Music ON';
+            }).catch(err => {
+                console.log("Автовоспроизведение заблокировано браузером:", err);
+            });
+        } else {
+            audio.pause();
+            widget.classList.remove('playing');
+            if (text) text.textContent = 'Music OFF';
+        }
+    });
+})();

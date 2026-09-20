@@ -981,3 +981,51 @@ body {
     border-color: rgba(255, 102, 170, 0.9) !important;
     background: rgba(255, 102, 170, 0.9) !important;
 }
+/* --- ВИДЖЕТ ФОНОВОЙ МУЗЫКИ --- */
+.music-widget {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(30, 26, 38, 0.7);
+    border: 1px solid rgba(255, 102, 170, 0.3);
+    padding: 8px 16px;
+    border-radius: 30px;
+    backdrop-filter: blur(10px);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 999;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.music-widget:hover {
+    border-color: #ff66aa;
+    box-shadow: 0 0 12px rgba(255, 102, 170, 0.5);
+    transform: translateY(-2px);
+}
+
+.disc-icon {
+    font-size: 16px;
+    color: #ff66aa;
+    transition: transform 0.3s ease;
+}
+
+/* Анимация вращения пластинки при воспроизведении */
+.music-widget.playing .disc-icon {
+    animation: spinDisc 3s linear infinite;
+    color: #00ffcc;
+}
+
+.music-widget.playing {
+    border-color: rgba(0, 255, 204, 0.4);
+}
+
+@keyframes spinDisc {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
