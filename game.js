@@ -529,7 +529,7 @@ const sizeIncreaseBtn = document.getElementById('size-increase-btn');
 const sizeResetBtn = document.getElementById('size-reset-btn');
 
 // Текущий масштаб (1 = 100%)
-let currentScale = parseFloat(localStorage.getItem('game-scale')) || 1.0;
+currentScale = parseFloat(localStorage.getItem('game-scale')) || 1.0;
 
 // Функция применения размера
 function applyGameScale(scale) {
