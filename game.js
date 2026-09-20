@@ -1,7 +1,7 @@
 console.log("Osu!mania: Multi-Layout & Mobile Touch Edition Loaded!");
 
 let score = 0;
-let combo = 0;
+combo = 0;
 let maxCombo = 0;
 let gameInterval;
 let beatInterval;
