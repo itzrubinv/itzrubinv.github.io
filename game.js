@@ -721,17 +721,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!audio || !widget) return;
 
-    // Громкость по умолчанию (30%)
-    audio.volume = 0.3;
+    audio.volume = 0.3; // Громкость 30%
 
     widget.addEventListener('click', () => {
         if (audio.paused) {
-            audio.play().then(() => {
-                widget.classList.add('playing');
-                if (text) text.textContent = 'Music ON';
-            }).catch(err => {
-                console.log("Автовоспроизведение заблокировано браузером:", err);
-            });
+            const playPromise = audio.play();
+
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    // Успешно заиграло
+                    widget.classList.add('playing');
+                    if (text) text.textContent = 'Music ON';
+                }).catch(err => {
+                    console.error("Ошибка воспроизведения аудио:", err);
+                    if (text) text.textContent = 'Error loading';
+                });
+            }
         } else {
             audio.pause();
             widget.classList.remove('playing');
