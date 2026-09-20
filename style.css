@@ -981,51 +981,88 @@ body {
     border-color: rgba(255, 102, 170, 0.9) !important;
     background: rgba(255, 102, 170, 0.9) !important;
 }
-/* --- ВИДЖЕТ ФОНОВОЙ МУЗЫКИ --- */
-.music-widget {
+/* ==========================================
+   Музыкальный виджет (Music Widget)
+   ========================================== */
+
+#music-widget {
     position: fixed;
-    bottom: 25px;
-    left: 25px;
-    display: flex;
+    top: 20px;
+    left: 20px;
+    z-index: 9999;
+    display: inline-flex;
     align-items: center;
     gap: 10px;
-    background: rgba(30, 26, 38, 0.7);
-    border: 1px solid rgba(255, 102, 170, 0.3);
     padding: 8px 16px;
-    border-radius: 30px;
-    backdrop-filter: blur(10px);
-    color: #fff;
-    font-size: 13px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50px;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    z-index: 999;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    user-select: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
-.music-widget:hover {
-    border-color: #ff66aa;
-    box-shadow: 0 0 12px rgba(255, 102, 170, 0.5);
+/* Эффект при наведении */
+#music-widget:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
     transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
 }
 
-.disc-icon {
-    font-size: 16px;
-    color: #ff66aa;
+/* Активное состояние (когда кликнули) */
+#music-widget:active {
+    transform: translateY(0) scale(0.97);
+}
+
+/* Состояние при включенной музыке (Music ON) */
+#music-widget.playing {
+    background: rgba(255, 50, 120, 0.2);
+    border-color: rgba(255, 50, 120, 0.5);
+    box-shadow: 0 0 20px rgba(255, 50, 120, 0.4);
+}
+
+#music-widget.playing:hover {
+    background: rgba(255, 50, 120, 0.3);
+    border-color: rgba(255, 50, 120, 0.7);
+    box-shadow: 0 0 25px rgba(255, 50, 120, 0.6);
+}
+
+/* Иконка / винил */
+#music-widget .music-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
     transition: transform 0.3s ease;
 }
 
-/* Анимация вращения пластинки при воспроизведении */
-.music-widget.playing .disc-icon {
-    animation: spinDisc 3s linear infinite;
-    color: #00ffcc;
+/* Вращение винила/иконки при воспроизведении */
+#music-widget.playing .music-icon {
+    animation: spin 3s linear infinite;
 }
 
-.music-widget.playing {
-    border-color: rgba(0, 255, 204, 0.4);
+/* Текст кнопки */
+#music-widget .music-text {
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 12px;
 }
 
-@keyframes spinDisc {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+/* Анимация вращения */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
