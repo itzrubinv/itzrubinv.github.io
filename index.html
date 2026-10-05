@@ -1,181 +1,81 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-WJ3EFR74BL"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-WJ3EFR74BL');
+gtag('config', 'G-WJ3EFR74BL');
 </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>rubinv</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=4">
-</head>
-<body>
-    <!-- Кастомный неоновый курсор -->
-<div id="custom-cursor" class="custom-cursor"></div>
-    <div id="combo-flash-overlay" class="combo-flash-overlay"></div>
-    <div class="fog-container">
-        <div class="fog-layer"></div>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>rubinv</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="style.css?v=5">
+<!-- Кнопка настроек -->
+<button id="settings-toggle-btn" class="settings-toggle-btn">⚙️</button>
+
+<!-- Сайдбар настроек -->
+<div id="settings-sidebar" class="settings-sidebar">
+    <div class="settings-header">
+        <h3>Settings</h3>
+        <button id="settings-close-x" class="settings-close-x">×</button>
     </div>
-
-    <button id="settings-toggle-btn" class="settings-toggle-btn">⚙️</button>
-
-    <button id="game-toggle-btn" class="game-toggle-btn">🎮 Play mania</button>
-
-    <div id="settings-sidebar" class="settings-sidebar">
-        <div class="settings-header">
-            <h3>Settings</h3>
-            <button id="settings-close-x" class="settings-close-x">×</button>
+    <div class="settings-body">
+        <div class="setting-item">
+            <label>Custom Background</label>
+            <!-- Прямой инпут, стилизованный под кнопку -->
+            <input type="file" id="bg-uploader" accept="image/*" class="osu-btn" style="border: none; background: #2e2a36; padding: 8px; font-size: 0.9rem; cursor: pointer;">
+            <button type="button" id="bg-reset-btn" class="osu-btn" style="margin-top: 8px; padding: 6px; font-size: 0.8rem; border: none; color: #ff4444; background: transparent;">Reset Background</button>
         </div>
-        <div class="settings-body">
-            <div class="setting-item">
-                <label for="volume-master">Music Volume: <span id="val-volume-master">100%</span></label>
-                <input type="range" id="volume-master" min="0" max="100" value="100">
-            </div>
-            
-            <div class="setting-item">
-                <label for="volume-effects">Effects Volume: <span id="val-volume-effects">100%</span></label>
-                <input type="range" id="volume-effects" min="0" max="100" value="100">
-            </div>
-
-            <div class="setting-item">
-                <label for="audio-offset">Audio Offset: <span id="val-audio-offset">0 ms</span></label>
-                <div class="offset-control">
-                    <input type="range" id="audio-offset" min="-200" max="200" value="0" step="5">
-                </div>
-                <small class="setting-hint">Сдвиг нот при рассинхронизации</small>
-            </div>
-            
-           <div class="setting-item">
-    <label>Custom Background</label>
-    <!-- Прямой инпут, стилизованный под кнопку -->
-    <input type="file" id="bg-uploader" accept="image/*" class="osu-btn" style="border: none; background: #2e2a36; padding: 8px; font-size: 0.9rem; cursor: pointer;">
-    <button type="button" id="bg-reset-btn" class="osu-btn" style="margin-top: 8px; padding: 6px; font-size: 0.8rem; border: none; color: #ff4444; background: transparent;">Reset Background</button>
-</div>
-        </div>
-    </div>
-
-    <div id="game-sidebar" class="game-sidebar">
-        <div class="game-sidebar-header">
-            <button id="game-close-x" class="settings-close-x">×</button>
-            
-            <div class="size-controls">
-                <button id="size-decrease-btn" title="Уменьшить">🔍-</button>
-                <button id="size-reset-btn" title="Сбросить">100%</button>
-                <button id="size-increase-btn" title="Увеличить">🔍+</button>
-            </div>
-        </div>
-
-        <div class="game-container" id="resizable-game">
-            <div class="game-info">
-                <div class="score-box">Score: <span id="score">000000</span></div>
-                <div class="combo-box">Combo: <span id="combo">0</span></div>
-            </div>
-            <!-- Блок таблицы личных рекордов -->
-<div class="high-score-board">
-    <span>🏆 Рекорд: <strong id="best-score">0</strong></span>
-    <span>⭐ Макс. комбо: <strong id="best-combo">0</strong></span>
-</div>
-            <div class="difficulty-selector">
-                <label for="diff">Difficulty: </label>
-                <select id="diff">
-                    <option value="easy">Easy</option>
-                    <option value="normal" selected>Normal</option>
-                    <option value="hard">Hard</option>
-                </select>
-            </div>
-            
-            <div class="mania-board">
-                <canvas id="visualizer-canvas" class="visualizer-canvas"></canvas>
-
-                <div class="lane" id="lane-0"></div>
-                <div class="lane" id="lane-1"></div>
-                <div class="lane" id="lane-2"></div>
-                <div class="lane" id="lane-3"></div>
-                
-                <div class="hit-zone">
-                    <div class="key-hint" id="key-0" data-lane="0"><span>D</span></div>
-                    <div class="key-hint" id="key-1" data-lane="1"><span>F</span></div>
-                    <div class="key-hint" id="key-2" data-lane="2"><span>J</span></div>
-                    <div class="key-hint" id="key-3" data-lane="3"><span>K</span></div>
-                </div>
-                
-                <div id="hit-rating" class="hit-rating"></div>
-
-                <div id="result-screen" class="result-screen" style="display: none;">
-                    <h2 class="result-title">RESULTS</h2>
-                    <div class="result-rank" id="res-rank">A</div>
-                    <div class="result-stats">
-                        <p>Score: <span id="res-score">000000</span></p>
-                        <p>Max Combo: <span id="res-combo">0</span></p>
-                        <p>Accuracy: <span id="res-acc">0%</span></p>
-                    </div>
-                    <button id="result-close-btn" class="result-close-btn">Back</button>
-                </div>
-            </div>
-            
-            <div class="game-controls">
-                <button id="start-game-btn">Start Game</button>
-                <button id="pause-game-btn" style="display: none;">Pause</button>
-                <button id="reset-game-btn" style="display: none;">Reset</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="main-layout">
-        <div class="profile-container">
-            <div class="avatar-wrapper">
-                <img src="https://i.imgur.com/qHBMFD6.gif" alt="Avatar" class="osu-avatar">
-            </div>
-                <h1 class="osu-username glowing-name">rubinv</h1>
-            <p class="osu-status"></p>
-            <!-- Виджет статуса Discord -->
-<div id="discord-status-card" class="discord-status-card">
-    <div class="avatar-status-wrapper">
-        <span id="discord-dot" class="status-dot offline"></span>
-    </div>
-    <div class="discord-info">
-        <div id="discord-custom-status" class="discord-custom-status">loading status...</div>
-        <div id="discord-activity" class="discord-activity"></div>
     </div>
 </div>
-            <div class="osu-links">
-    <!-- Кнопка osu! профиля -->
-<a href="https://osu.ppy.sh/users/38160390" target="_blank" class="osu-btn osu-profile">
-    <svg class="osu-icon" viewBox="0 0 512 512" width="20" height="20" fill="currentColor">
-        <path d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 432c-101.62 0-184-82.38-184-184S154.38 72 256 72s184 82.38 184 184-82.38 184-184 184zm0-312c-70.692 0-128 57.308-128 128s57.308 128 128 128 128-57.308 128-128-57.308-128-128-128zm0 200c-39.765 0-72-32.235-72-72s32.235-72 72-72 72 32.235 72 72-32.235 72-72 72z"/>
-    </svg>
-    <span>osu! Profile</span>
-</a>
-            <a href="discord://discord.com/ zx xusers/935086307401695293" class="osu-btn discord" target="_blank" rel="noopener noreferrer">
-    <i class="fa-brands fa-discord"></i> Discord
-</a>
-</a>
-</a>
-                <a href="https://t.me/rubinv" class="osu-btn telegram" target="_blank" rel="noopener noreferrer">
-        <i class="fab fa-telegram"></i> Telegram
-    </a>
+
+<!-- Основной контент страницы -->
+<div class="main-layout">
+    <div class="profile-container">
+        <div class="avatar-wrapper">
+            <img src="https://i.imgur.com/qHBMFD6.gif" alt="Avatar" class="osu-avatar">
+        </div>
+        <h1 class="osu-username glowing-name">rubinv</h1>
+        <p class="osu-status"></p>
+        
+        <!-- Виджет статуса Discord -->
+        <div id="discord-status-card" class="discord-status-card">
+            <div class="avatar-status-wrapper">
+                <span id="discord-dot" class="status-dot offline"></span>
+            </div>
+            <div class="discord-info">
+                <div id="discord-custom-status" class="discord-custom-status">loading status...</div>
+                <div id="discord-activity" class="discord-activity"></div>
             </div>
         </div>
+
+        <div class="osu-links">
+            <!-- Кнопка osu! профиля -->
+            <a href="https://osu.ppy.sh/users/38160390" target="_blank" class="osu-btn osu-profile">
+                <svg class="osu-icon" viewBox="0 0 512 512" width="20" height="20" fill="currentColor">
+                    <path d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 432c-101.62 0-184-82.38-184-184S154.38 72 256 72s184 82.38 184 184-82.38 184-184 184zm0-312c-70.692 0-128 57.308-128 128s57.308 128 128 128 128-57.308 128-128-57.308-128-128-128zm0 200c-39.765 0-72-32.235-72-72s32.235-72 72-72 72 32.235 72 72-32.235 72-72 72z"/>
+                </svg>
+                <span>osu! Profile</span>
+            </a>
+
+            <!-- Кнопка Discord -->
+            <a href="https://discord.com/users/935086307401695293" class="osu-btn discord" target="_blank" rel="noopener noreferrer">
+                <i class="fa-brands fa-discord"></i> Discord
+            </a>
+
+            <!-- Кнопка Telegram -->
+            <a href="https://t.me/rubinv" class="osu-btn telegram" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-telegram"></i> Telegram
+            </a>
+        </div>
     </div>
+</div>
 
-    <audio id="game-music" src="voice.mp3" preload="auto"></audio>
-    <audio id="hit-sound" src="hit.mp3" preload="auto"></audio>
-    <audio id="miss-sound" src="miss.mp3" preload="auto"></audio>
+<!-- Всплывающее уведомление -->
+<div id="toast-notification" class="toast">Скопировано в буфер!</div>
 
-    <script src="game.js?v=5"></script>
-<!-- Музыкальный скрипт -->
- <div id="music-widget">
+<!-- Виджет фоновой музыки -->
+<div id="music-widget">
     <div class="music-icon">🎵</div>
     <span class="music-text">Music OFF</span>
 </div>
-<audio id="bg-audio" src="lofi.mp3" loop preload="auto"></audio>
-    <script src="music.js?v=1"></script>
-</body>
-</body> 
+<audio id="bg-audio" src="bg-music.mp3" loop preload="auto"></audio>
+
+<!-- Скрипты -->
+<script src="game.js?v=6"></script>
+<script src="music.js?v=2"></script>
