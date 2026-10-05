@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const bgUploader = document.getElementById('bg-uploader');
-const bgResetBtn = document.getElementById('bg-reset');
+const bgResetBtn = document.getElementById('bg-reset-btn');
 
 if (bgUploader) {
     bgUploader.addEventListener('change', function(e) {
@@ -43,6 +43,27 @@ if (bgResetBtn) {
         if (bgUploader) bgUploader.value = '';
     });
 }
+
+// --- 1.1. SETTINGS SIDEBAR ---
+(function initSettingsSidebar() {
+    const toggleBtn = document.getElementById('settings-toggle-btn');
+    const closeBtn = document.getElementById('settings-close-x');
+    const sidebar = document.getElementById('settings-sidebar');
+
+    if (!toggleBtn || !sidebar) return;
+
+    const setOpen = (isOpen) => {
+        sidebar.classList.toggle('open', isOpen);
+        toggleBtn.setAttribute('aria-expanded', String(isOpen));
+        sidebar.setAttribute('aria-hidden', String(!isOpen));
+    };
+
+    toggleBtn.addEventListener('click', () => {
+        setOpen(!sidebar.classList.contains('open'));
+    });
+
+    if (closeBtn) closeBtn.addEventListener('click', () => setOpen(false));
+})();
 
 // --- 2. DISCORD LANYARD INTEGRATION ---
 const DISCORD_ID = "935086307401695293";
