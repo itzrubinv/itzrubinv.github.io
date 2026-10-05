@@ -1,10 +1,15 @@
-gtag('config', 'G-WJ3EFR74BL');
 </script>
+gtag('config', 'G-WJ3EFR74BL');
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>rubinv</title>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="style.css?v=6">
+<div class="fog-container">
+    <div class="fog-layer"></div>
+</div>
+
 <!-- Кнопка настроек -->
 <button id="settings-toggle-btn" class="settings-toggle-btn">⚙️</button>
 
@@ -17,14 +22,13 @@ gtag('config', 'G-WJ3EFR74BL');
     <div class="settings-body">
         <div class="setting-item">
             <label>Custom Background</label>
-            <!-- Прямой инпут, стилизованный под кнопку -->
             <input type="file" id="bg-uploader" accept="image/*" class="osu-btn" style="border: none; background: #2e2a36; padding: 8px; font-size: 0.9rem; cursor: pointer;">
             <button type="button" id="bg-reset-btn" class="osu-btn" style="margin-top: 8px; padding: 6px; font-size: 0.8rem; border: none; color: #ff4444; background: transparent;">Reset Background</button>
         </div>
     </div>
 </div>
 
-<!-- Основной контент страницы -->
+<!-- Основная карточка профиля -->
 <div class="main-layout">
     <div class="profile-container">
         <div class="avatar-wrapper">
@@ -44,21 +48,19 @@ gtag('config', 'G-WJ3EFR74BL');
             </div>
         </div>
 
+        <!-- Ссылки -->
         <div class="osu-links">
-            <!-- Кнопка osu! профиля -->
             <a href="https://osu.ppy.sh/users/38160390" target="_blank" class="osu-btn osu-profile">
                 <svg class="osu-icon" viewBox="0 0 512 512" width="20" height="20" fill="currentColor">
-                    <path d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 432c-101.62 0-184-82.38-184-184S154.38 72 256 72s184 82.38 184 184-82.38 184-184 184zm0-312c-70.692 0-128 57.308-128 128s57.308 128 128 128 128-57.308 128-128-57.308-128-128-128zm0 200c-39.765 0-72-32.235-72-72s32.235-72 72-72 72 32.235 72 72-32.235 72-72 72z"/>
+                    <path d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 432c-101.62 0-184-82.38-184-184S154.38 72 256 72s184 82.38 184 184-82.38 184-184 184zm0-312c-70.692 0-128 57.308-128 128s57.308 128 128 128-57.308-128-128-128zm0 200c-39.765 0-72-32.235-72-72s32.235-72 72-72 72 32.235 72 72-32.235 72-72 72z"/>
                 </svg>
                 <span>osu! Profile</span>
             </a>
 
-            <!-- Кнопка Discord -->
             <a href="https://discord.com/users/935086307401695293" class="osu-btn discord" target="_blank" rel="noopener noreferrer">
                 <i class="fa-brands fa-discord"></i> Discord
             </a>
 
-            <!-- Кнопка Telegram -->
             <a href="https://t.me/rubinv" class="osu-btn telegram" target="_blank" rel="noopener noreferrer">
                 <i class="fab fa-telegram"></i> Telegram
             </a>
@@ -66,10 +68,10 @@ gtag('config', 'G-WJ3EFR74BL');
     </div>
 </div>
 
-<!-- Всплывающее уведомление -->
-<div id="toast-notification" class="toast">Скопировано в буфер!</div>
+<!-- Всплывающее уведомление (скрыто стилем по умолчанию) -->
+<div id="toast-notification" class="toast" style="display: none;">Скопировано в буфер!</div>
 
-<!-- Виджет фоновой музыки -->
+<!-- Виджет музыки -->
 <div id="music-widget">
     <div class="music-icon">🎵</div>
     <span class="music-text">Music OFF</span>
