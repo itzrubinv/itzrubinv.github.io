@@ -1,83 +1,72 @@
-gtag('config', 'G-WJ3EFR74BL');
-</script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>rubinv</title>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>rubinv</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link rel="stylesheet" href="style.css?v=6">
-<div class="fog-container">
-    <div class="fog-layer"></div>
-</div>
+    <!-- Подключение файла аналитики -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WJ3EFR74BL"></script>
+    <script src="analytics.js"></script>
 
-<!-- Кнопка настроек -->
-<button id="settings-toggle-btn" class="settings-toggle-btn">⚙️</button>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css?v=6">
+</head>
+<body>
+    <div id="custom-cursor" class="custom-cursor"></div>
 
-<!-- Сайдбар настроек -->
-<div id="settings-sidebar" class="settings-sidebar">
-    <div class="settings-header">
-        <h3>Settings</h3>
-        <button id="settings-close-x" class="settings-close-x">×</button>
+    <div class="fog-container">
+        <div class="fog-layer"></div>
     </div>
-    <div class="settings-body">
-        <div class="setting-item">
-            <label>Custom Background</label>
-            <input type="file" id="bg-uploader" accept="image/*" class="osu-btn" style="border: none; background: #2e2a36; padding: 8px; font-size: 0.9rem; cursor: pointer;">
-            <button type="button" id="bg-reset-btn" class="osu-btn" style="margin-top: 8px; padding: 6px; font-size: 0.8rem; border: none; color: #ff4444; background: transparent;">Reset Background</button>
-        </div>
-    </div>
-</div>
 
-<!-- Основная карточка профиля -->
-<div class="main-layout">
-    <div class="profile-container">
-        <div class="avatar-wrapper">
-            <img src="https://i.imgur.com/qHBMFD6.gif" alt="Avatar" class="osu-avatar">
+    <button id="settings-toggle-btn" class="settings-toggle-btn">⚙</button>
+
+    <div id="settings-sidebar" class="settings-sidebar">
+        <div class="settings-header">
+            <h3>Settings</h3>
+            <button id="settings-close-x" class="settings-close-x">×</button>
         </div>
-        <h1 class="osu-username glowing-name">rubinv</h1>
-        <p class="osu-status"></p>
-        
-        <!-- Виджет статуса Discord -->
-        <div id="discord-status-card" class="discord-status-card">
-            <div class="avatar-status-wrapper">
-                <span id="discord-dot" class="status-dot offline"></span>
-            </div>
-            <div class="discord-info">
-                <div id="discord-custom-status" class="discord-custom-status">loading status...</div>
-                <div id="discord-activity" class="discord-activity"></div>
+        <div class="settings-body">
+            <div class="setting-item">
+                <label>Custom Background</label>
+                <input type="file" id="bg-uploader" accept="image/*" class="osu-btn" style="border: none; background: #2e2a36; padding: 8px; font-size: 0.9rem; cursor: pointer;">
+                <button type="button" id="bg-reset-btn" class="osu-btn" style="margin-top: 8px; padding: 6px; font-size: 0.8rem; border: none; color: #ff4444; background: transparent;">Reset Background</button>
             </div>
         </div>
+    </div>
+    <div class="main-layout">
+        <div class="profile-container">
+            <div class="avatar-wrapper">
+                <img src="https://i.imgur.com/qHBMFD6.gif" alt="Avatar" class="osu-avatar">
+            </div>
+            <h1 class="osu-username glowing-name">rubinv</h1>
+            <p class="osu-status"></p>
+            
+            <div id="discord-status-card" class="discord-status-card">
+                <div class="avatar-status-wrapper">
+                    <span id="discord-dot" class="status-dot offline"></span>
+                </div>
+                <div class="discord-info">
+                    <div id="discord-custom-status" class="discord-custom-status">loading status...</div>
+                    <div id="discord-activity" class="discord-activity"></div>
+                </div>
+            </div>
 
-        <!-- Ссылки -->
-        <div class="osu-links">
-            <a href="https://osu.ppy.sh/users/38160390" target="_blank" class="osu-btn osu-profile">
-                <svg class="osu-icon" viewBox="0 0 512 512" width="20" height="20" fill="currentColor">
-                    <path d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 432c-101.62 0-184-82.38-184-184S154.38 72 256 72s184 82.38 184 184-82.38 184-184 184zm0-312c-70.692 0-128 57.308-128 128s57.308 128 128 128-57.308-128-128-128zm0 200c-39.765 0-72-32.235-72-72s32.235-72 72-72 72 32.235 72 72-32.235 72-72 72z"/>
-                </svg>
-                <span>osu! Profile</span>
-            </a>
+            <div class="osu-links">
+                <a href="https://osu.ppy.sh/users/38160390" target="_blank" class="osu-btn osu-profile">
+                    <svg class="osu-icon" viewBox="0 0 512 512" width="20" height="20" fill="currentColor">
+                        <path d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 432c-101.62 0-184-82.38-184-184S154.38 72 256 72s184 82.38 184 184-82.38 184-184-184zm0-312c-70.692 0-128 57.308-128 128s57.308 128 128 128-57.308-128-128-128zm0 200c-39.765 0-72-32.235-72-72s32.235-72 72-72 72 32.235 72 72-32.235 72-72 72z"/>
+                    </svg>
+                    <span>osu! Profile</span>
+                </a>
 
-            <a href="https://discord.com/users/935086307401695293" class="osu-btn discord" target="_blank" rel="noopener noreferrer">
-                <i class="fa-brands fa-discord"></i> Discord
-            </a>
+                <a href="https://discord.com/users/935086307401695293" class="osu-btn discord" target="_blank" rel="noopener noreferrer">
+                    <i class="fa-brands fa-discord"></i> Discord
+                </a>
 
-            <a href="https://t.me/rubinv" class="osu-btn telegram" target="_blank" rel="noopener noreferrer">
-                <i class="fab fa-telegram"></i> Telegram
-            </a>
+                <a href="https://t.me/rubinv" class="osu-btn telegram" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-telegram"></i> Telegram
+                </a>
+            </div>
         </div>
     </div>
-</div>
-
-<!-- Всплывающее уведомление (скрыто стилем по умолчанию) -->
-<div id="toast-notification" class="toast" style="display: none;">1</div>
-
-<!-- Виджет музыки -->
-<div id="music-widget">
-    <div class="music-icon">🎵</div>
-    <span class="music-text">Music OFF</span>
-</div>
-<audio id="bg-audio" src="bg-music.mp3" loop preload="auto"></audio>
-
-<!-- Скрипты -->
-<script src="game.js?v=6"></script>
-<script src="music.js?v=2"></script>
