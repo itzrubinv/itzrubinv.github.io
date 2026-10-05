@@ -5,20 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>rubinv</title>
 
-    <!-- Подключение файла аналитики -->
+    <!-- Подключение Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WJ3EFR74BL"></script>
-    <script src="analytics.js"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-WJ3EFR74BL');
+    </script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
+    <!-- Кастомный курсор -->
     <div id="custom-cursor" class="custom-cursor"></div>
 
+    <!-- Задний фон / Туман -->
     <div class="fog-container">
         <div class="fog-layer"></div>
     </div>
 
+    <!-- Кнопка и сайдбар настроек -->
     <button id="settings-toggle-btn" class="settings-toggle-btn">⚙</button>
 
     <div id="settings-sidebar" class="settings-sidebar">
@@ -34,6 +43,8 @@
             </div>
         </div>
     </div>
+
+    <!-- Карточка профиля -->
     <div class="main-layout">
         <div class="profile-container">
             <div class="avatar-wrapper">
@@ -70,3 +81,19 @@
             </div>
         </div>
     </div>
+
+    <!-- Уведомление буфера -->
+    <div id="toast-notification" class="toast" style="display: none;">Скопировано в буфер!</div>
+
+    <!-- Музыкальный виджет -->
+    <div id="music-widget">
+        <div class="music-icon">🎵</div>
+        <span class="music-text">Music OFF</span>
+    </div>
+    <audio id="bg-audio" src="bg-music.mp3" loop preload="auto"></audio>
+
+    <!-- Скрипты -->
+    <script src="game.js?v=6"></script>
+    <script src="music.js?v=2"></script>
+</body>
+</html>
